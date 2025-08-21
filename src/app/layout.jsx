@@ -23,16 +23,16 @@ export default async function RootLayout({ children }) {
             suppressHydrationWarning
             // Add data-theme attribute to force light mode
         >
-            <Head
-                // ... Your additional head options
-                backgroundColor={{ dark: "#0f172a", light: "#ffffff" }}
-            >
+            <Head backgroundColor={{ dark: "#0f172a", light: "#ffffff" }}>
                 {/* Your additional tags should be passed as `children` of `<Head>` element */}
             </Head>
             <body>
                 <Layout
                     pageMap={pageMap}
-                    // docsRepositoryBase="https://github.com/casdoc/CasDoc-Wiki/tree/main/src/app"
+                    feedback={{
+                        link: "https://github.com/casdoc/CasDoc-Wiki/issues/new",
+                    }}
+                    editLink={null}
                 >
                     <Navbar
                         logo={
