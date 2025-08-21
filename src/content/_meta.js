@@ -1,6 +1,3 @@
-import { GitHubIcon } from 'nextra/icons'
- 
 export default {
-  index: 'My Homepage',
-  
-}
+    index: "My Homepage",
+};
