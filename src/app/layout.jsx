@@ -25,7 +25,7 @@ export default async function RootLayout({ children }) {
         >
             <Head
                 // ... Your additional head options
-                backgroundColor={{ dark: "#0f172a", light: "#fefce8" }}
+                backgroundColor={{ dark: "#0f172a", light: "#ffffff" }}
             >
                 {/* Your additional tags should be passed as `children` of `<Head>` element */}
             </Head>
