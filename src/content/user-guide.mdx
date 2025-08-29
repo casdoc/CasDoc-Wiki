@@ -1,0 +1,380 @@
+# User Guide
+
+This comprehensive guide covers all the features and operations you can perform in CasDoc. Use this as a reference for detailed instructions on specific tasks.
+
+## Document Management
+
+### Creating Documents
+
+#### Starting a New Document
+1. Click the **"New Document"** button in the main interface
+2. Choose from the following options:
+   - **Blank Document**: Start with an empty document
+   - **Template-based**: Select from available templates
+   - **Copy Existing**: Duplicate an existing document
+
+#### Document Settings
+- **Title**: Give your document a descriptive name
+- **Description**: Add a brief summary of the document's purpose
+- **Tags**: Add metadata tags for organization and search
+- **Access Level**: Set who can view and edit the document
+
+### Organizing Documents
+
+#### Folder Structure
+- Create folders to organize related documents
+- Use hierarchical folder structure for complex projects
+- Apply consistent naming conventions
+
+#### Document Properties
+- **Creation Date**: Automatically tracked
+- **Last Modified**: Shows recent activity
+- **Author**: Original creator and contributors
+- **Status**: Draft, Review, Approved, Archived
+
+### Document Navigation
+
+#### Outline View
+- Automatic generation based on document structure
+- Click headings to jump to sections
+- Expand/collapse sections for overview
+
+#### Search and Filter
+- **Full-text search**: Find content across all documents
+- **Tag filtering**: Filter by metadata tags
+- **Date filters**: Find documents by creation or modification date
+- **Author filters**: Find documents by specific contributors
+
+## Content Creation and Editing
+
+### Text Editing
+
+#### Basic Formatting
+- **Bold**: Ctrl+B (Cmd+B on Mac) or use toolbar
+- **Italic**: Ctrl+I (Cmd+I on Mac) or use toolbar
+- **Underline**: Ctrl+U (Cmd+U on Mac) or use toolbar
+- **Strikethrough**: Available in formatting menu
+
+#### Headers and Structure
+- **H1-H6**: Use for document hierarchy
+- **Automatic numbering**: Option for numbered headings
+- **Table of contents**: Auto-generated from headings
+
+#### Lists and Organization
+- **Bulleted lists**: Use for unordered items
+- **Numbered lists**: Use for sequential items
+- **Nested lists**: Create sub-items with indentation
+- **Checklists**: Interactive checkboxes for task lists
+
+### Advanced Content
+
+#### Tables
+1. Insert table using the toolbar
+2. Specify rows and columns
+3. Add headers and format cells
+4. Resize columns by dragging borders
+
+#### Links and References
+- **External links**: Link to websites and external resources
+- **Internal links**: Link to other documents or sections
+- **Cross-references**: Create bidirectional relationships
+- **Anchors**: Link to specific positions within documents
+
+#### Images and Media
+- **Image upload**: Drag and drop or use file picker
+- **Image formatting**: Resize, align, and add captions
+- **Alt text**: Add accessibility descriptions
+- **Media embedding**: Embed videos and other media types
+
+### Code and Technical Content
+
+#### Code Blocks
+```
+Use triple backticks for code blocks
+Supports syntax highlighting for many languages
+```
+
+#### Inline Code
+Use `backticks` for inline code snippets
+
+#### Mathematical Expressions
+- **Inline math**: Use $LaTeX$ syntax
+- **Block math**: Use $$LaTeX$$ for equations
+
+## Template System
+
+### Using Templates
+
+#### Inserting Templates
+1. Position cursor where you want the template
+2. Click **"Insert Template"** in the toolbar
+3. Select the desired template type
+4. Fill in the required fields
+
+#### Template Fields
+- **Required fields**: Must be completed before saving
+- **Optional fields**: Can be left empty if not applicable
+- **Dropdown selections**: Choose from predefined options
+- **Free text**: Enter custom content
+
+### Available Templates
+
+#### User Story Template
+```
+As a [user type]
+I want [functionality]
+So that [benefit/value]
+
+Acceptance Criteria:
+- [ ] Criterion 1
+- [ ] Criterion 2
+- [ ] Criterion 3
+
+Definition of Done:
+- [ ] Code complete
+- [ ] Unit tests written
+- [ ] Documentation updated
+- [ ] Code reviewed
+```
+
+#### Test Case Template
+```
+Test Case ID: [Unique identifier]
+Test Case Name: [Descriptive name]
+Description: [What this test validates]
+
+Preconditions:
+- [Setup requirements]
+
+Test Steps:
+1. [Step 1]
+2. [Step 2]
+3. [Step 3]
+
+Expected Results:
+- [Expected outcome]
+
+Priority: [High/Medium/Low]
+Status: [Not Run/Pass/Fail/Blocked]
+```
+
+#### API Documentation Template
+```
+Endpoint: [HTTP method and URL]
+Description: [What this API does]
+
+Parameters:
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| param1 | string | Yes | Description |
+
+Request Example:
+[Code block with example request]
+
+Response Example:
+[Code block with example response]
+
+Error Codes:
+| Code | Description |
+|------|-------------|
+| 400 | Bad Request |
+| 404 | Not Found |
+```
+
+### Customizing Templates
+
+#### Field Modification
+- **Add fields**: Insert additional content areas
+- **Remove fields**: Delete unnecessary sections
+- **Reorder**: Change the sequence of fields
+- **Format**: Apply styling to template content
+
+#### Creating Custom Templates
+1. Start with an existing template or blank document
+2. Create the desired structure with placeholders
+3. Save as a template for reuse
+4. Share with team members
+
+## Collaboration Features
+
+### Real-time Editing
+
+#### Simultaneous Editing
+- Multiple users can edit the same document
+- See collaborators' cursors and selections
+- Automatic conflict resolution
+- Real-time updates without page refresh
+
+#### User Presence
+- See who else is currently viewing/editing
+- View collaborator profiles and contact information
+- Chat feature for quick communication
+
+### Comments and Reviews
+
+#### Adding Comments
+1. Select text or position cursor
+2. Click **"Add Comment"** or use Ctrl+M
+3. Type your comment
+4. Tag specific users with @mentions
+
+#### Comment Management
+- **Reply**: Respond to existing comments
+- **Resolve**: Mark comments as addressed
+- **Filter**: View only unresolved comments
+- **Export**: Include comments in exported documents
+
+### Version Control
+
+#### Automatic Versioning
+- Every save creates a new version
+- Version history shows timeline of changes
+- Compare versions to see differences
+
+#### Manual Versioning
+- **Create checkpoint**: Mark significant milestones
+- **Version labels**: Add descriptive names to versions
+- **Restore**: Revert to previous versions if needed
+
+### Sharing and Permissions
+
+#### Share Settings
+- **Public**: Anyone with link can view
+- **Private**: Only invited users can access
+- **Organization**: All organization members can view
+- **Custom**: Specific user permissions
+
+#### Permission Levels
+- **Viewer**: Can read but not edit
+- **Commenter**: Can read and add comments
+- **Editor**: Can read, edit, and comment
+- **Owner**: Full control including sharing settings
+
+## Traceability and Relationships
+
+### Creating Relationships
+
+#### Manual Linking
+1. Select source content
+2. Click **"Create Link"** or use Ctrl+L
+3. Choose relationship type
+4. Select target content
+5. Confirm the relationship
+
+#### Relationship Types
+- **Implements**: Source implements target requirement
+- **Tests**: Source tests target functionality
+- **Depends on**: Source depends on target
+- **Refines**: Source provides detail for target
+- **Conflicts with**: Source conflicts with target
+
+### Relationship Management
+
+#### Viewing Relationships
+- **Relationship panel**: Shows all links for current content
+- **Visual map**: Graphical representation of relationships
+- **Traceability matrix**: Tabular view of relationships
+
+#### Maintaining Relationships
+- **Automatic validation**: Check for broken links
+- **Update notifications**: Alert when linked content changes
+- **Bulk operations**: Update multiple relationships at once
+
+## Search and Discovery
+
+### Search Features
+
+#### Basic Search
+- **Keyword search**: Find documents containing specific words
+- **Phrase search**: Use quotes for exact phrases
+- **Wildcard search**: Use * for partial matches
+
+#### Advanced Search
+- **Field-specific**: Search in titles, content, or metadata
+- **Date ranges**: Find documents modified within timeframes
+- **Author search**: Find documents by specific contributors
+- **Tag search**: Filter by metadata tags
+
+#### Search Results
+- **Relevance ranking**: Most relevant results first
+- **Snippet preview**: See matching content in context
+- **Filter options**: Narrow results by type, date, author
+- **Save searches**: Bookmark frequent searches
+
+### Content Discovery
+
+#### Related Content
+- **Automatic suggestions**: Based on current document
+- **Recently viewed**: Quick access to recent documents
+- **Trending**: Popular documents in your organization
+
+#### Navigation Aids
+- **Breadcrumbs**: Show current location in hierarchy
+- **Quick links**: Shortcuts to frequently accessed content
+- **Favorites**: Bookmark important documents
+
+## Export and Integration
+
+### Export Options
+
+#### Format Options
+- **PDF**: Publication-ready format with formatting
+- **Microsoft Word**: Editable document format
+- **Markdown**: Plain text with markup
+- **HTML**: Web-publishable format
+- **Plain Text**: Simple text without formatting
+
+#### Export Settings
+- **Include comments**: Option to include review comments
+- **Include metadata**: Add document properties
+- **Page layout**: Control formatting and styling
+- **Section selection**: Export specific sections only
+
+### Integration Features
+
+#### Version Control Integration
+- **Git integration**: Sync with Git repositories
+- **Commit messages**: Automatic generation based on changes
+- **Branch management**: Work with feature branches
+
+#### Project Management Integration
+- **Jira integration**: Link to tickets and issues
+- **Azure DevOps**: Connect to work items
+- **Trello**: Sync with boards and cards
+
+#### Development Tool Integration
+- **IDE plugins**: Edit documentation from development environment
+- **CI/CD**: Include documentation in build pipelines
+- **Testing tools**: Link documentation to test results
+
+## Troubleshooting
+
+### Common Issues
+
+#### Performance Problems
+- **Slow loading**: Check internet connection and browser cache
+- **Sync issues**: Refresh page or clear browser data
+- **Memory usage**: Close unnecessary browser tabs
+
+#### Editing Issues
+- **Lost changes**: Check version history for recovery
+- **Formatting problems**: Use the format painter or reset formatting
+- **Template errors**: Verify all required fields are completed
+
+#### Collaboration Issues
+- **Permission errors**: Check sharing settings and user permissions
+- **Sync conflicts**: Use conflict resolution tools
+- **Comment notifications**: Verify notification settings
+
+### Getting Help
+
+#### Built-in Help
+- **Tooltips**: Hover over interface elements for quick help
+- **Help panel**: Context-sensitive help information
+- **Tutorial mode**: Interactive guidance for new users
+
+#### Support Resources
+- **Documentation**: Comprehensive online documentation
+- **Video tutorials**: Step-by-step video guides
+- **Community forum**: User community for questions and tips
+- **Support tickets**: Direct support for technical issues
