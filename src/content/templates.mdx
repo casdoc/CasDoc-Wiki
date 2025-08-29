@@ -1,0 +1,327 @@
+# Templates
+
+Templates in CasDoc provide structured formats for common types of documentation. They ensure consistency, completeness, and help maintain traceability across your documentation.
+
+## Overview of Templates
+
+Templates serve several important purposes:
+- **Standardization**: Ensure consistent format across similar documents
+- **Completeness**: Include all necessary fields and sections
+- **Efficiency**: Speed up document creation
+- **Quality**: Reduce errors through guided creation
+- **Traceability**: Built-in relationship fields
+
+## Requirements Templates
+
+### User Story Template
+
+User stories are a fundamental component of agile development, capturing requirements from the user's perspective.
+
+#### When to Use
+- Agile development projects
+- Feature specification
+- User-centered requirements
+- Sprint planning
+
+#### Template Structure
+
+**Title**: Brief description of the story
+
+**Story**:
+As a [type of user]
+I want [some goal or functionality]
+So that [some reason or benefit]
+
+**Acceptance Criteria**:
+- Specific, testable condition 1
+- Specific, testable condition 2
+- Specific, testable condition 3
+
+**Priority**: High/Medium/Low
+**Story Points**: Estimation
+**Epic**: Related epic or theme
+
+**Definition of Done**:
+- Code complete and reviewed
+- Unit tests written and passing
+- Integration tests passing
+- Documentation updated
+- Acceptance criteria verified
+
+**Dependencies**:
+- List any dependent stories or requirements
+
+**Notes**:
+Additional context, constraints, or clarifications
+
+#### Best Practices
+- Keep stories small and focused
+- Write from the user's perspective
+- Include clear acceptance criteria
+- Ensure stories are testable
+- Link to related stories and epics
+
+## Testing Templates
+
+### Test Case Template
+
+Test cases provide step-by-step instructions for validating specific functionality.
+
+#### When to Use
+- Quality assurance testing
+- Acceptance testing
+- Regression testing
+- Manual test documentation
+
+#### Template Structure
+
+**Test Case ID**: Unique identifier (e.g., TC001)
+**Test Case Name**: Descriptive name
+**Module**: System component being tested
+**Created By**: Test creator
+**Created Date**: Creation date
+
+**Description**:
+Brief description of what this test validates
+
+**Prerequisites**:
+- Setup requirements
+- Data requirements
+- System state requirements
+
+**Test Steps**:
+1. Action to perform
+2. Next action
+3. Continue with detailed steps
+
+**Expected Results**:
+- Expected outcome for each step
+- Final expected state
+
+**Test Data**:
+- Specific data values to use
+- Test accounts or configurations
+
+**Priority**: Critical/High/Medium/Low
+**Type**: Smoke/Functional/Integration/Regression
+**Execution Method**: Manual/Automated
+
+**Status**: Not Run/Pass/Fail/Blocked/Skip
+**Actual Results**: What actually happened
+**Defects**: Links to any bugs found
+
+**Notes**:
+Additional observations or comments
+
+## Technical Templates
+
+### API Documentation Template
+
+API documentation templates ensure comprehensive coverage of interface specifications.
+
+#### When to Use
+- RESTful API documentation
+- Service interface specification
+- Integration documentation
+- Developer reference materials
+
+#### Template Structure
+
+**API Name**: API or service name
+**Version**: API version
+**Base URL**: Service base URL
+
+**Overview**:
+Brief description of API purpose and functionality
+
+**Authentication**:
+Type: Bearer Token/API Key/OAuth/Basic Auth
+Details: How to authenticate requests
+
+**Endpoint**: HTTP Method and URL Path
+**Description**: What this endpoint does
+
+**Parameters**:
+| Name | Type | Location | Required | Description |
+|------|------|----------|----------|-------------|
+| param1 | string | path | Yes | Description |
+| param2 | integer | query | No | Description |
+
+**Headers**:
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| Content-Type | string | Yes | application/json |
+| Authorization | string | Yes | Bearer token |
+
+**Request Body**:
+Content-Type: application/json
+
+**Response**:
+Status Code: 200 OK
+Content-Type: application/json
+
+**Error Responses**:
+| Status Code | Description | Response Body |
+|-------------|-------------|---------------|
+| 400 | Bad Request | Error message |
+| 401 | Unauthorized | Authentication required |
+| 404 | Not Found | Resource not found |
+
+**Rate Limiting**:
+- Limit: Requests per time period
+- Headers: Rate limit headers returned
+
+**Notes**:
+Additional information, deprecation notices, etc.
+
+## Process Templates
+
+### Procedure Template
+
+Step-by-step procedures for operational processes.
+
+#### Template Structure
+
+**Procedure Name**: Descriptive name
+**Procedure ID**: Unique identifier
+**Version**: Version number
+**Effective Date**: When this version takes effect
+**Review Date**: Next scheduled review
+
+**Purpose**:
+Why this procedure exists and what it accomplishes
+
+**Scope**:
+What is covered and what is not covered
+
+**Responsibilities**:
+- Role 1: Specific responsibilities
+- Role 2: Specific responsibilities
+
+**Prerequisites**:
+- Required training or certifications
+- Required tools or access
+- Environmental conditions
+
+**Procedure Steps**:
+1. First step with clear action
+2. Second step
+3. Continue with numbered steps
+
+**Quality Checks**:
+- Checkpoint 1: What to verify
+- Checkpoint 2: Expected outcome
+
+**Troubleshooting**:
+| Problem | Possible Cause | Solution |
+|---------|----------------|----------|
+| Issue | Likely cause | Resolution |
+
+**References**:
+- Related procedures
+- Regulatory requirements
+- Training materials
+
+### Checklist Template
+
+Verification and validation checklists to ensure completeness.
+
+#### Template Structure
+
+**Checklist Name**: Descriptive name
+**Purpose**: What this checklist validates
+**Frequency**: How often to use
+**Owner**: Responsible person or role
+
+**Instructions**:
+How to use this checklist effectively
+
+**Pre-Checklist Requirements**:
+- Prerequisite 1
+- Prerequisite 2
+
+**Main Checklist**:
+Category 1: Group name
+- Item 1 - Additional details if needed
+- Item 2 - Expected outcome
+- Item 3 - Reference to procedure
+
+Category 2: Another group
+- Item 4
+- Item 5
+
+**Critical Items**: Items that cannot be skipped
+- Critical item 1 - REQUIRED
+- Critical item 2 - REQUIRED
+
+**Sign-off**:
+Completed by: _________________ Date: _________
+Verified by: __________________ Date: _________
+
+**Notes/Exceptions**:
+Space for documenting any deviations or issues
+
+**References**:
+- Related procedures
+- Standards or requirements
+
+## Custom Template Creation
+
+### Creating Your Own Templates
+
+#### Planning Your Template
+1. **Identify the purpose**: What type of content will this template support?
+2. **Analyze existing content**: Look at similar documents for common patterns
+3. **Define required fields**: What information is essential?
+4. **Consider relationships**: How will this content link to other documents?
+
+#### Template Design Principles
+- **Clarity**: Use clear field labels and instructions
+- **Completeness**: Include all necessary sections
+- **Flexibility**: Allow for customization when needed
+- **Consistency**: Follow organizational standards
+
+#### Implementation Steps
+1. Create a sample document with the desired structure
+2. Replace content with placeholder text
+3. Add field descriptions and instructions
+4. Test with sample content
+5. Refine based on feedback
+6. Save as a reusable template
+
+### Template Management
+
+#### Organizing Templates
+- **Categories**: Group by purpose or domain
+- **Naming conventions**: Use consistent, descriptive names
+- **Version control**: Track template updates
+- **Access control**: Manage who can modify templates
+
+#### Template Governance
+- **Review process**: Regular template reviews
+- **Update procedures**: How to modify existing templates
+- **Approval workflow**: Who approves new templates
+- **Retirement process**: How to phase out outdated templates
+
+### Best Practices
+
+#### Template Design
+- Keep templates simple and focused
+- Use clear, descriptive field names
+- Provide examples and guidance
+- Include help text for complex fields
+- Design for reusability
+
+#### Template Usage
+- Train users on proper template usage
+- Provide examples of completed templates
+- Establish quality standards
+- Monitor template effectiveness
+- Collect user feedback for improvements
+
+#### Maintenance
+- Regular review and updates
+- Version control for template changes
+- Impact analysis before modifications
+- Communication of template updates
+- Archive obsolete templates
