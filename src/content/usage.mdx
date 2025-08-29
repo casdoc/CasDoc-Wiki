@@ -1,0 +1,450 @@
+# Usage
+
+Learn how to effectively use CasDoc to polish and translate your documentation. This guide covers common workflows, best practices, and advanced usage patterns.
+
+## Basic Usage
+
+### Document Polishing
+
+The most common use case is polishing existing documentation for better clarity and quality.
+
+#### Single Operation
+```bash
+# Set your environment
+export CASDOC_AUTHTOKEN="your-openai-api-key"
+export CASDOC_REPOPATH="/path/to/your/docs"
+
+# Polish all documentation
+casdoc
+```
+
+This will:
+1. Scan the `docs/` directory recursively
+2. Process each markdown file with AI
+3. Improve grammar, clarity, and readability
+4. Save the enhanced content back to the original files
+
+#### With Configuration File
+```bash
+# Use custom configuration
+casdoc --config /path/to/config.toml
+```
+
+### Document Translation
+
+Translate your documentation into multiple languages:
+
+```bash
+# Translate to specific languages
+casdoc --translate --languages zh,fr,de
+
+# Translate to all supported languages
+casdoc --translate --all-languages
+```
+
+Supported languages:
+- `zh` - Chinese (Simplified)
+- `fr` - French
+- `de` - German
+- `ko` - Korean
+- `ru` - Russian
+- `ja` - Japanese
+
+## Command Line Options
+
+### Basic Commands
+
+```bash
+# Polish documentation (default behavior)
+casdoc
+
+# Translate documentation
+casdoc --translate
+
+# Show help
+casdoc --help
+
+# Show version
+casdoc --version
+```
+
+### Advanced Options
+
+```bash
+# Use specific configuration file
+casdoc --config config.toml
+
+# Enable verbose output
+casdoc --verbose
+
+# Dry run (show what would be processed)
+casdoc --dry-run
+
+# Process specific directory
+casdoc --path /custom/docs/path
+
+# Set custom model
+casdoc --model gpt-4
+
+# Set temperature for AI responses
+casdoc --temperature 0.2
+```
+
+### Translation Options
+
+```bash
+# Translate to specific languages
+casdoc --translate --languages zh,fr
+
+# Translate all files to all supported languages
+casdoc --translate --all-languages
+
+# Preserve original files during translation
+casdoc --translate --preserve-original
+
+# Output translations to separate directory
+casdoc --translate --output-dir ./translations
+```
+
+## Workflow Examples
+
+### Daily Documentation Maintenance
+
+```bash
+#!/bin/bash
+# daily-docs-update.sh
+
+# Set environment
+export CASDOC_AUTHTOKEN="your-api-key"
+export CASDOC_REPOPATH="/path/to/project"
+
+# Polish documentation
+echo "Polishing documentation..."
+casdoc --verbose
+
+# Check for any failures
+if [ $? -eq 0 ]; then
+    echo "Documentation updated successfully"
+    git add docs/
+    git commit -m "docs: Polish documentation with CasDoc"
+else
+    echo "Documentation update failed"
+    exit 1
+fi
+```
+
+### Multi-Language Release Process
+
+```bash
+#!/bin/bash
+# release-docs.sh
+
+# Polish English documentation first
+casdoc
+
+# Translate to all supported languages
+casdoc --translate --all-languages --output-dir ./docs/i18n
+
+# Organize translated files
+for lang in zh fr de ko ru ja; do
+    mkdir -p "docs/i18n/$lang"
+    mv "docs/i18n"/*."$lang".md "docs/i18n/$lang/"
+done
+```
+
+### Continuous Integration
+
+```yaml
+# .github/workflows/docs.yml
+name: Documentation Update
+
+on:
+  push:
+    paths: ['docs/**/*.md']
+  pull_request:
+    paths: ['docs/**/*.md']
+
+jobs:
+  update-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.19'
+          
+      - name: Install CasDoc
+        run: go install github.com/casbin/casdoc@latest
+        
+      - name: Polish Documentation
+        env:
+          CASDOC_AUTHTOKEN: ${{ secrets.OPENAI_API_KEY }}
+          CASDOC_REPOPATH: ${{ github.workspace }}
+        run: casdoc --verbose
+        
+      - name: Commit Changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add docs/
+          git diff --staged --quiet || git commit -m "docs: Polish documentation"
+          
+      - name: Push Changes
+        if: github.event_name == 'push'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+```
+
+## Processing Behavior
+
+### File Discovery
+
+CasDoc processes files in this order:
+
+1. **Directory Scanning**: Recursively scans the `docs/` directory
+2. **File Filtering**: Includes only `.md` and `.mdx` files
+3. **Queue Building**: Creates a processing queue with all eligible files
+4. **Processing**: Handles files one by one with progress tracking
+
+### Error Handling
+
+When errors occur:
+
+```bash
+# Files that fail processing are added to failed list
+# Check the logs for details
+casdoc --verbose
+
+# Retry failed files
+casdoc --retry-failed
+
+# Skip problematic files
+casdoc --skip-errors
+```
+
+### Progress Tracking
+
+Monitor progress during processing:
+
+```
+Now polish: docs/README.md (1/10)
+Now polish: docs/guide.md (2/10)
+Now polish: docs/api.md (3/10)
+```
+
+## Best Practices
+
+### Before Running CasDoc
+
+1. **Backup Your Files**
+   ```bash
+   # Create backup
+   cp -r docs/ docs.backup/
+   
+   # Or use git
+   git add docs/
+   git commit -m "Backup before CasDoc processing"
+   ```
+
+2. **Review Your Documentation**
+   - Ensure files are in valid markdown format
+   - Remove or fix broken links
+   - Check for sensitive information
+
+3. **Test with Small Set**
+   ```bash
+   # Test with a single file first
+   mkdir test-docs
+   cp docs/README.md test-docs/
+   export CASDOC_REPOPATH="/path/to/test-docs"
+   casdoc
+   ```
+
+### During Processing
+
+1. **Monitor Progress**
+   ```bash
+   # Use verbose mode to see detailed progress
+   casdoc --verbose
+   ```
+
+2. **Handle Interruptions**
+   - CasDoc can be safely interrupted with Ctrl+C
+   - Failed files are tracked and can be retried
+   - No partial file updates occur
+
+### After Processing
+
+1. **Review Changes**
+   ```bash
+   # See what changed
+   git diff docs/
+   
+   # Review specific files
+   git diff docs/README.md
+   ```
+
+2. **Quality Check**
+   - Verify technical accuracy
+   - Check formatting preservation
+   - Test any code examples
+
+3. **Commit Changes**
+   ```bash
+   git add docs/
+   git commit -m "docs: Polish documentation with CasDoc"
+   ```
+
+## Advanced Usage Patterns
+
+### Selective Processing
+
+Process only specific files or directories:
+
+```bash
+# Process only README files
+find docs/ -name "README.md" -type f > filelist.txt
+casdoc --file-list filelist.txt
+
+# Process files modified in last 7 days
+find docs/ -name "*.md" -mtime -7 -type f | while read file; do
+    export CASDOC_SINGLE_FILE="$file"
+    casdoc --single-file
+done
+```
+
+### Custom Prompts
+
+Override default AI prompts for specific needs:
+
+```toml
+# config.toml
+[prompts]
+polish_prompt = """
+Improve this technical documentation by:
+1. Fixing grammar and spelling errors
+2. Enhancing clarity and readability
+3. Ensuring consistent terminology
+4. Maintaining technical accuracy
+5. Preserving all code examples and links
+
+Content: {content}
+"""
+
+translate_prompt = """
+Translate this technical documentation to {language}.
+Preserve:
+- All code blocks and examples
+- Technical terminology
+- Link structures
+- Formatting
+
+Content: {content}
+"""
+```
+
+### Batch Operations
+
+Process multiple repositories:
+
+```bash
+#!/bin/bash
+# batch-process.sh
+
+repos=(
+    "/path/to/repo1"
+    "/path/to/repo2"
+    "/path/to/repo3"
+)
+
+for repo in "${repos[@]}"; do
+    echo "Processing $repo..."
+    export CASDOC_REPOPATH="$repo"
+    casdoc --verbose
+    
+    if [ $? -eq 0 ]; then
+        echo "✓ $repo processed successfully"
+    else
+        echo "✗ $repo failed"
+    fi
+done
+```
+
+## Performance Optimization
+
+### Parallel Processing
+
+Configure parallel processing for large documentation sets:
+
+```toml
+# config.toml
+[processing]
+batch_size = 5          # Process 5 files at once
+concurrent_workers = 3  # Use 3 parallel workers
+max_file_size = 2097152 # Skip files larger than 2MB
+```
+
+### Rate Limiting
+
+Avoid API rate limits:
+
+```toml
+# config.toml
+[rate_limiting]
+requests_per_minute = 50
+request_delay = 1200  # 1.2 seconds between requests
+```
+
+### Cost Management
+
+Monitor and control API costs:
+
+```bash
+# Use cheaper model for bulk processing
+export CASDOC_MODEL="gpt-3.5-turbo"
+
+# Lower temperature for more predictable costs
+export CASDOC_TEMPERATURE="0.1"
+
+# Set token limits
+export CASDOC_MAX_TOKENS="1500"
+```
+
+## Troubleshooting Common Issues
+
+### Files Not Processing
+
+**Problem**: CasDoc reports "no files found"
+**Solution**: 
+- Verify `docs/` directory exists
+- Check file extensions (must be `.md` or `.mdx`)
+- Ensure proper permissions
+
+### API Errors
+
+**Problem**: OpenAI API errors
+**Solution**:
+- Check API key validity
+- Verify sufficient credits
+- Check network connectivity
+- Review rate limits
+
+### Quality Issues
+
+**Problem**: Poor output quality
+**Solution**:
+- Adjust temperature settings
+- Use a more advanced model (gpt-4)
+- Provide custom prompts
+- Review input documentation quality
+
+## Next Steps
+
+- **[Features](/features)**: Explore advanced CasDoc features
+- **[Examples](/examples)**: See real-world usage examples
+- **[API Reference](/api-reference)**: Complete command reference
+- **[FAQ](/faq)**: Common questions and solutions

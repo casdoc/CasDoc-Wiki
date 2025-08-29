@@ -1,0 +1,151 @@
+# Getting Started
+
+Welcome to CasDoc! This guide will help you get up and running with CasDoc quickly so you can start improving your documentation with AI-powered polishing and translation.
+
+## Prerequisites
+
+Before you begin, make sure you have:
+
+- **Go 1.19 or later**: CasDoc is written in Go and requires a recent version
+- **OpenAI API Key**: You'll need access to OpenAI's API for AI-powered features
+- **Git**: For cloning the repository and managing your documentation projects
+
+## Quick Setup
+
+### 1. Get an OpenAI API Token
+
+First, you'll need an OpenAI API token:
+
+1. Visit [OpenAI's API platform](https://platform.openai.com/api-keys)
+2. Sign in to your account or create a new one
+3. Navigate to "API Keys" in your dashboard
+4. Click "Create new secret key"
+5. Copy your API key (keep it secure!)
+
+### 2. Set Environment Variables
+
+Set up the required environment variables:
+
+```bash
+# Set your OpenAI API token
+export CASDOC_AUTHTOKEN=your_openai_api_key_here
+
+# Set the path to your documentation repository
+export CASDOC_REPOPATH=/path/to/your/documentation/repo
+```
+
+**Important**: Replace `your_openai_api_key_here` with your actual OpenAI API key, and set `CASDOC_REPOPATH` to the path containing your documentation files.
+
+### 3. Install CasDoc
+
+#### Option A: Install from Source
+
+```bash
+# Clone the repository
+git clone https://github.com/casbin/casdoc.git
+cd casdoc
+
+# Build the application
+go build
+
+# Run CasDoc
+./casdoc
+```
+
+#### Option B: Use Go Install
+
+```bash
+# Install directly with Go
+go install github.com/casbin/casdoc@latest
+
+# Run CasDoc
+casdoc
+```
+
+#### Option C: Run with Go Run
+
+```bash
+# Clone and run directly
+git clone https://github.com/casbin/casdoc.git
+cd casdoc
+go run main.go
+```
+
+## Your First Documentation Polish
+
+Let's polish some documentation:
+
+### 1. Prepare Your Documentation
+
+Ensure your documentation is in a `docs/` directory within your repository:
+
+```
+your-repo/
+├── docs/
+│   ├── README.md
+│   ├── guide.md
+│   └── api.md
+└── other-files...
+```
+
+### 2. Run CasDoc
+
+With your environment variables set, run CasDoc:
+
+```bash
+# Navigate to your documentation repository
+cd /path/to/your/repo
+
+# Run CasDoc to polish all documentation
+casdoc
+```
+
+CasDoc will:
+- Scan your `docs/` directory
+- Process each markdown file
+- Use AI to improve clarity, grammar, and style
+- Show progress as it works through your files
+
+### 3. Review the Results
+
+After CasDoc completes:
+- Check the improved documentation files
+- Review the changes for accuracy
+- Commit the improvements to your repository
+
+## Next Steps
+
+Now that you have CasDoc running:
+
+- **[Configuration](/configuration)**: Learn about advanced configuration options
+- **[Usage](/usage)**: Explore different ways to use CasDoc
+- **[Features](/features)**: Discover all of CasDoc's capabilities
+- **[Examples](/examples)**: See real-world usage examples
+
+## Troubleshooting
+
+### Common Issues
+
+**Error: "Failed to get file list"**
+- Check that your `CASDOC_REPOPATH` points to a valid directory
+- Ensure the path contains a `docs/` subdirectory
+
+**Error: "OpenAI API error"**
+- Verify your `CASDOC_AUTHTOKEN` is set correctly
+- Check that your OpenAI API key is valid and has sufficient credits
+
+**No files processed**
+- Ensure your documentation files are in markdown format (`.md` extension)
+- Check that files are located in the `docs/` directory
+
+For more troubleshooting help, see our [FAQ section](/faq).
+
+## Getting Help
+
+Need assistance? Here are your options:
+
+- **Documentation**: Browse this wiki for detailed information
+- **GitHub Issues**: [Report bugs or request features](https://github.com/casbin/casdoc/issues)
+- **Community**: Connect with other CasDoc users
+
+Ready to dive deeper? Check out our [Usage guide](/usage) for advanced features and workflows!

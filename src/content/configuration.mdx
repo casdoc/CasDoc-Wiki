@@ -1,0 +1,339 @@
+# Configuration
+
+CasDoc provides flexible configuration options to customize its behavior for your specific documentation needs. This guide covers all available configuration methods and options.
+
+## Environment Variables
+
+### Required Variables
+
+#### CASDOC_AUTHTOKEN
+Your OpenAI API authentication token.
+
+```bash
+export CASDOC_AUTHTOKEN="sk-your-openai-api-key-here"
+```
+
+**Where to get it:**
+- Visit [OpenAI API Keys](https://platform.openai.com/api-keys)
+- Create a new secret key
+- Copy the key (it starts with `sk-`)
+
+#### CASDOC_REPOPATH
+Path to your documentation repository.
+
+```bash
+export CASDOC_REPOPATH="/path/to/your/documentation/repo"
+```
+
+**Requirements:**
+- Must be an absolute path
+- Directory must contain a `docs/` subdirectory
+- User must have read/write permissions
+
+### Optional Variables
+
+#### CASDOC_MODEL
+Specify which OpenAI model to use (default: `gpt-3.5-turbo`).
+
+```bash
+export CASDOC_MODEL="gpt-4"
+```
+
+**Available models:**
+- `gpt-3.5-turbo` (default, faster and cheaper)
+- `gpt-4` (more accurate, slower and more expensive)
+- `gpt-4-turbo` (balanced option)
+
+#### CASDOC_TEMPERATURE
+Control AI creativity/randomness (default: `0.3`).
+
+```bash
+export CASDOC_TEMPERATURE="0.1"
+```
+
+**Range:** 0.0 to 1.0
+- `0.0`: Most deterministic, consistent output
+- `0.3`: Balanced (recommended for documentation)
+- `1.0`: Most creative, varied output
+
+#### CASDOC_MAX_TOKENS
+Maximum tokens per API request (default: `2000`).
+
+```bash
+export CASDOC_MAX_TOKENS="4000"
+```
+
+## Configuration File
+
+CasDoc supports configuration files for advanced settings and team collaboration.
+
+### Location
+
+Create a `config.toml` file in one of these locations:
+
+**Linux/macOS:**
+```
+~/.config/casdoc/config.toml
+./config.toml (in current directory)
+```
+
+**Windows:**
+```
+%APPDATA%\casdoc\config.toml
+.\config.toml (in current directory)
+```
+
+### Example Configuration
+
+```toml
+# config.toml
+[general]
+# API request timeout in seconds
+api_timeout = 30
+# Maximum retry attempts for failed requests
+max_retries = 3
+# Enable verbose logging
+verbose = true
+
+[openai]
+# OpenAI model to use
+model = "gpt-3.5-turbo"
+# Temperature for AI responses (0.0-1.0)
+temperature = 0.3
+# Maximum tokens per request
+max_tokens = 2000
+# API base URL (for custom endpoints)
+base_url = "https://api.openai.com/v1"
+
+[processing]
+# Number of files to process in parallel
+batch_size = 5
+# Maximum concurrent workers
+concurrent_workers = 2
+# Skip files larger than this size (in bytes)
+max_file_size = 1048576  # 1MB
+
+[translation]
+# Default target languages for translation
+default_languages = ["zh", "fr", "de"]
+# Preserve code blocks during translation
+preserve_code = true
+# Preserve links during translation
+preserve_links = true
+
+[polishing]
+# Focus areas for document polishing
+focus_areas = ["grammar", "clarity", "consistency"]
+# Preserve original formatting
+preserve_formatting = true
+# Add explanatory comments
+add_comments = false
+
+[output]
+# Create backup files before modification
+create_backups = true
+# Backup file suffix
+backup_suffix = ".bak"
+# Output encoding
+encoding = "utf-8"
+```
+
+## Platform-Specific Configuration
+
+### Linux/macOS Setup
+
+Add to your shell profile (`.bashrc`, `.zshrc`, etc.):
+
+```bash
+# CasDoc Configuration
+export CASDOC_AUTHTOKEN="your-api-key"
+export CASDOC_REPOPATH="/home/user/docs"
+export CASDOC_MODEL="gpt-3.5-turbo"
+export CASDOC_TEMPERATURE="0.3"
+
+# Optional: Add to PATH if installed locally
+export PATH="$PATH:$HOME/bin"
+```
+
+### Windows Configuration
+
+#### PowerShell
+Add to your PowerShell profile:
+
+```powershell
+# CasDoc Configuration
+$env:CASDOC_AUTHTOKEN = "your-api-key"
+$env:CASDOC_REPOPATH = "C:\Users\YourName\Documents\docs"
+$env:CASDOC_MODEL = "gpt-3.5-turbo"
+$env:CASDOC_TEMPERATURE = "0.3"
+```
+
+#### Command Prompt
+Create a batch file (`casdoc-config.bat`):
+
+```batch
+@echo off
+set CASDOC_AUTHTOKEN=your-api-key
+set CASDOC_REPOPATH=C:\Users\YourName\Documents\docs
+set CASDOC_MODEL=gpt-3.5-turbo
+set CASDOC_TEMPERATURE=0.3
+```
+
+## Team Configuration
+
+### Shared Configuration
+
+For team environments, create a shared configuration:
+
+```toml
+# team-config.toml
+[general]
+api_timeout = 45
+max_retries = 5
+
+[processing]
+batch_size = 3
+concurrent_workers = 1
+
+[translation]
+default_languages = ["zh", "fr", "de", "ja"]
+preserve_code = true
+
+[output]
+create_backups = true
+backup_suffix = ".casdoc.bak"
+```
+
+Use with:
+```bash
+casdoc --config team-config.toml
+```
+
+### CI/CD Configuration
+
+For continuous integration:
+
+```yaml
+# .github/workflows/casdoc.yml
+name: Update Documentation
+on:
+  push:
+    paths: ['docs/**']
+
+jobs:
+  polish-docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v3
+      - name: Install CasDoc
+        run: go install github.com/casbin/casdoc@latest
+      - name: Polish Documentation
+        env:
+          CASDOC_AUTHTOKEN: ${{ secrets.OPENAI_API_KEY }}
+          CASDOC_REPOPATH: ${{ github.workspace }}
+        run: casdoc
+```
+
+## Configuration Validation
+
+### Verify Settings
+
+Check your configuration with:
+
+```bash
+# Verify environment variables
+echo "Token: ${CASDOC_AUTHTOKEN:0:10}..."
+echo "Repo: $CASDOC_REPOPATH"
+echo "Model: $CASDOC_MODEL"
+
+# Test API connectivity
+casdoc --test-connection
+```
+
+### Common Issues
+
+#### Invalid API Key
+```
+Error: Authentication failed with OpenAI API
+```
+**Solution:** Verify your `CASDOC_AUTHTOKEN` is correct and has sufficient credits.
+
+#### Path Not Found
+```
+Error: Failed to get file list
+```
+**Solution:** Check that `CASDOC_REPOPATH` points to a valid directory with a `docs/` subdirectory.
+
+#### Permission Denied
+```
+Error: Permission denied writing to file
+```
+**Solution:** Ensure CasDoc has write permissions to the documentation directory.
+
+## Security Considerations
+
+### API Key Protection
+- Never commit API keys to version control
+- Use environment variables or secure secret management
+- Rotate keys regularly
+- Use separate keys for development and production
+
+### File Permissions
+```bash
+# Secure configuration file
+chmod 600 ~/.config/casdoc/config.toml
+
+# Secure backup directory
+chmod 755 ~/.config/casdoc/backups
+```
+
+### Network Security
+- Use HTTPS endpoints only
+- Configure firewall rules if needed
+- Monitor API usage for anomalies
+
+## Advanced Configuration
+
+### Custom Prompts
+
+Override default AI prompts:
+
+```toml
+[prompts]
+polish_prompt = "Improve this documentation for clarity and accuracy:"
+translate_prompt = "Translate this technical documentation to {language}:"
+```
+
+### File Filtering
+
+Control which files are processed:
+
+```toml
+[filters]
+# Include only these file extensions
+include_extensions = [".md", ".mdx", ".txt"]
+# Exclude these patterns
+exclude_patterns = ["**/node_modules/**", "**/vendor/**"]
+# Minimum file size (bytes)
+min_file_size = 100
+```
+
+### Rate Limiting
+
+Configure API rate limits:
+
+```toml
+[rate_limiting]
+# Requests per minute
+requests_per_minute = 60
+# Pause between requests (milliseconds)
+request_delay = 1000
+```
+
+## Next Steps
+
+- **[Usage](/usage)**: Learn how to use CasDoc with your configuration
+- **[Features](/features)**: Explore advanced features and capabilities
+- **[Examples](/examples)**: See configuration examples for different scenarios

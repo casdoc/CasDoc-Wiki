@@ -1,0 +1,303 @@
+# Features
+
+CasDoc offers powerful features designed to streamline your documentation workflow. Explore the comprehensive capabilities that make CasDoc an essential tool for documentation management.
+
+## 🔧 Documentation Polishing
+
+Transform your existing documentation with AI-powered enhancements.
+
+### Grammar and Style Improvement
+- **Automatic Grammar Correction**: Fix grammatical errors, typos, and punctuation issues
+- **Style Consistency**: Ensure uniform writing style across all documentation
+- **Readability Enhancement**: Improve sentence structure and clarity
+- **Technical Accuracy**: Maintain technical precision while improving presentation
+
+### Content Enhancement
+- **Clarity Optimization**: Simplify complex explanations without losing meaning
+- **Structure Improvement**: Better organization of ideas and concepts
+- **Conciseness**: Remove redundancy and improve information density
+- **Flow Enhancement**: Smooth transitions between topics and sections
+
+### Preservation Features
+- **Format Retention**: Maintains markdown formatting, links, and code blocks
+- **Technical Terms**: Preserves technical terminology and jargon
+- **Code Examples**: Keeps code snippets and syntax highlighting intact
+- **Link Integrity**: Maintains all internal and external links
+
+## 🌍 Multi-Language Translation
+
+Expand your documentation's global reach with intelligent translation capabilities.
+
+### Supported Languages
+
+| Language | Code | Status |
+|----------|------|--------|
+| Chinese (Simplified) | `zh` | ✅ Fully Supported |
+| French | `fr` | ✅ Fully Supported |
+| German | `de` | ✅ Fully Supported |
+| Korean | `ko` | ✅ Fully Supported |
+| Russian | `ru` | ✅ Fully Supported |
+| Japanese | `ja` | ✅ Fully Supported |
+
+### Translation Features
+- **Context-Aware Translation**: Understands technical context and domain-specific terminology
+- **Batch Translation**: Process entire documentation sets efficiently
+- **Terminology Consistency**: Maintains consistent translation of technical terms
+- **Format Preservation**: Keeps all formatting, links, and code blocks intact
+
+### Translation Modes
+```bash
+# Translate to specific languages
+casdoc --translate --languages zh,fr,de
+
+# Translate to all supported languages
+casdoc --translate --all-languages
+
+# Preserve original files
+casdoc --translate --preserve-original
+```
+
+## ⚡ Efficient Processing
+
+Built for performance and reliability in handling large documentation projects.
+
+### Queue-Based Processing
+- **Smart Queuing**: Efficient file discovery and processing order
+- **Progress Tracking**: Real-time progress indicators and statistics
+- **Error Recovery**: Automatic retry mechanisms for failed operations
+- **Batch Operations**: Process multiple files simultaneously
+
+### Performance Features
+- **Parallel Processing**: Multiple files processed concurrently
+- **Memory Optimization**: Efficient memory usage for large documentation sets
+- **Rate Limiting**: Built-in API rate limiting to avoid service limits
+- **Resumable Operations**: Continue from where you left off after interruptions
+
+### Monitoring and Logging
+```bash
+# Verbose progress tracking
+casdoc --verbose
+
+# Example output:
+# Now polish: docs/README.md (1/25)
+# Now polish: docs/guide.md (2/25)
+# ✓ Completed: docs/README.md
+# ✗ Failed: docs/complex.md (retrying...)
+```
+
+## 🤖 AI-Powered Intelligence
+
+Leverage advanced AI capabilities for superior documentation enhancement.
+
+### OpenAI Integration
+- **GPT-3.5 Turbo**: Fast and cost-effective processing (default)
+- **GPT-4**: Higher quality output for complex documents
+- **GPT-4 Turbo**: Balanced performance and quality
+- **Custom Models**: Support for custom OpenAI models
+
+### Intelligent Prompting
+- **Context-Aware Prompts**: Tailored prompts for different document types
+- **Custom Prompt Support**: Define your own improvement and translation prompts
+- **Adaptive Processing**: Adjusts approach based on content type and complexity
+
+### Quality Control
+- **Temperature Control**: Adjust creativity vs. consistency (0.0-1.0)
+- **Token Management**: Configurable token limits for cost control
+- **Output Validation**: Ensures output quality and format compliance
+
+## 📁 File Management
+
+Comprehensive file handling capabilities for various documentation structures.
+
+### File Discovery
+- **Recursive Scanning**: Automatically finds all documentation files
+- **Smart Filtering**: Processes only relevant file types
+- **Pattern Matching**: Supports include/exclude patterns
+- **Size Limits**: Configurable file size restrictions
+
+### Supported Formats
+- **Markdown**: `.md` files (primary format)
+- **MDX**: `.mdx` files with React components
+- **Text Files**: `.txt` files for simple documentation
+- **Custom Extensions**: Configurable file type support
+
+### File Operations
+```bash
+# Process specific file types
+casdoc --include "*.md,*.mdx"
+
+# Exclude certain patterns
+casdoc --exclude "**/node_modules/**,**/vendor/**"
+
+# Set file size limits
+casdoc --max-file-size 1MB
+```
+
+## 🔄 Backup and Recovery
+
+Protect your documentation with built-in backup and recovery features.
+
+### Automatic Backups
+- **Pre-Processing Backups**: Automatic backup before any modifications
+- **Configurable Backup Location**: Choose where backups are stored
+- **Backup Naming**: Timestamp-based backup file naming
+- **Cleanup Options**: Automatic old backup removal
+
+### Recovery Options
+```bash
+# Enable backups (default)
+casdoc --create-backups
+
+# Custom backup suffix
+casdoc --backup-suffix .casdoc-backup
+
+# Restore from backup
+casdoc --restore docs/README.md.bak
+```
+
+### Version Control Integration
+- **Git Integration**: Works seamlessly with Git repositories
+- **Commit Hooks**: Can be integrated into Git pre-commit hooks
+- **Diff-Friendly**: Changes are easy to review in version control
+
+## 🔧 Configuration Flexibility
+
+Extensive configuration options for different workflows and requirements.
+
+### Environment Variables
+```bash
+# Core configuration
+export CASDOC_AUTHTOKEN="your-api-key"
+export CASDOC_REPOPATH="/path/to/docs"
+export CASDOC_MODEL="gpt-3.5-turbo"
+export CASDOC_TEMPERATURE="0.3"
+```
+
+### Configuration Files
+```toml
+# config.toml
+[general]
+api_timeout = 30
+max_retries = 3
+
+[processing]
+batch_size = 5
+concurrent_workers = 2
+
+[translation]
+default_languages = ["zh", "fr", "de"]
+preserve_code = true
+```
+
+### Command-Line Overrides
+```bash
+# Override any configuration at runtime
+casdoc --model gpt-4 --temperature 0.1 --batch-size 10
+```
+
+## 🔍 Advanced Features
+
+Additional capabilities for power users and enterprise environments.
+
+### Custom Prompts
+Define your own improvement and translation prompts:
+
+```toml
+[prompts]
+polish_prompt = """
+Enhance this documentation by:
+1. Improving clarity and readability
+2. Fixing grammar and style issues
+3. Ensuring technical accuracy
+4. Maintaining all formatting
+
+Content: {content}
+"""
+```
+
+### API Customization
+- **Custom Endpoints**: Support for custom OpenAI-compatible APIs
+- **Request Customization**: Fine-tune API request parameters
+- **Response Processing**: Custom response handling and validation
+
+### Integration Features
+- **CI/CD Integration**: Works with GitHub Actions, GitLab CI, Jenkins
+- **Webhook Support**: Process documentation on repository events
+- **API Access**: Programmatic access to CasDoc functionality
+
+### Enterprise Features
+- **Team Configuration**: Shared configuration files for teams
+- **Audit Logging**: Detailed logs for compliance and debugging
+- **Access Control**: Integration with enterprise authentication systems
+- **Cost Tracking**: Monitor and control API usage costs
+
+## 📊 Analytics and Reporting
+
+Monitor your documentation improvement process with built-in analytics.
+
+### Processing Statistics
+- **File Counts**: Track processed, failed, and skipped files
+- **Performance Metrics**: Processing time and throughput statistics
+- **Quality Metrics**: Before/after comparisons where possible
+- **Cost Tracking**: API usage and cost monitoring
+
+### Reporting Options
+```bash
+# Generate processing report
+casdoc --report --output-format json
+
+# Example report output:
+{
+  "files_processed": 25,
+  "files_failed": 2,
+  "total_tokens_used": 15000,
+  "processing_time": "5m 32s",
+  "estimated_cost": "$0.15"
+}
+```
+
+## 🔒 Security Features
+
+Enterprise-grade security for protecting your documentation and API credentials.
+
+### Credential Management
+- **Environment Variable Support**: Secure credential storage
+- **Configuration File Encryption**: Encrypted configuration files
+- **API Key Rotation**: Support for regular key rotation
+- **Access Logging**: Track API usage and access patterns
+
+### Data Protection
+- **Local Processing**: No unnecessary data transmission
+- **Secure API Communication**: HTTPS-only communication
+- **Privacy Controls**: Options to exclude sensitive content
+- **Audit Trails**: Complete processing history for compliance
+
+## 🚀 Performance Optimization
+
+Built-in optimizations for handling large-scale documentation projects.
+
+### Parallel Processing
+- **Multi-Threading**: Process multiple files simultaneously
+- **Queue Optimization**: Intelligent processing order
+- **Resource Management**: Efficient CPU and memory usage
+- **Load Balancing**: Distribute work across available resources
+
+### Caching
+- **Result Caching**: Cache API responses for similar content
+- **File Caching**: Skip unchanged files in subsequent runs
+- **Smart Invalidation**: Automatic cache invalidation when files change
+
+### Cost Optimization
+- **Token Estimation**: Predict API costs before processing
+- **Batch Optimization**: Group requests for efficiency
+- **Model Selection**: Automatic model selection based on content complexity
+- **Rate Limiting**: Prevent costly API overages
+
+## Next Steps
+
+Explore these features in action:
+
+- **[Examples](/examples)**: See real-world feature usage
+- **[API Reference](/api-reference)**: Complete command and option reference
+- **[Configuration](/configuration)**: Detailed configuration guides
+- **[Usage](/usage)**: Practical usage patterns and workflows

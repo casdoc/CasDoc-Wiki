@@ -1,0 +1,239 @@
+# Installation
+
+This guide covers different methods to install and set up CasDoc on your system.
+
+## System Requirements
+
+### Minimum Requirements
+- **Operating System**: Linux, macOS, or Windows
+- **Go Version**: Go 1.19 or later
+- **Memory**: 512 MB RAM (2 GB recommended)
+- **Storage**: 100 MB free space
+
+### Dependencies
+- **Git**: For cloning repositories and version control
+- **OpenAI API Access**: Valid OpenAI API key with sufficient credits
+
+## Installation Methods
+
+### Method 1: Install from Source (Recommended)
+
+This method gives you the latest version and full control over the build process.
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/casbin/casdoc.git
+cd casdoc
+
+# 2. Download dependencies
+go mod download
+
+# 3. Build the binary
+go build -o casdoc
+
+# 4. (Optional) Install to system PATH
+sudo mv casdoc /usr/local/bin/
+```
+
+**Verification:**
+```bash
+casdoc --version  # Should display version information
+```
+
+### Method 2: Go Install
+
+Install directly using Go's package manager:
+
+```bash
+# Install the latest version
+go install github.com/casbin/casdoc@latest
+
+# The binary will be installed to $GOPATH/bin
+# Make sure $GOPATH/bin is in your PATH
+```
+
+**Add to PATH** (if needed):
+```bash
+# Add to your shell profile (.bashrc, .zshrc, etc.)
+export PATH=$PATH:$(go env GOPATH)/bin
+```
+
+### Method 3: Docker (Future Support)
+
+*Note: Docker support is planned for future releases.*
+
+### Method 4: Development Installation
+
+For contributors and developers:
+
+```bash
+# 1. Fork the repository on GitHub
+# 2. Clone your fork
+git clone https://github.com/YOUR_USERNAME/casdoc.git
+cd casdoc
+
+# 3. Add upstream remote
+git remote add upstream https://github.com/casbin/casdoc.git
+
+# 4. Install development dependencies
+go mod download
+
+# 5. Run tests to verify installation
+go test -v
+```
+
+## Post-Installation Setup
+
+### 1. Configure Environment Variables
+
+Create environment variables for CasDoc:
+
+#### Linux/macOS
+Add to your shell profile (`~/.bashrc`, `~/.zshrc`, etc.):
+
+```bash
+# OpenAI API Token
+export CASDOC_AUTHTOKEN="your_openai_api_key_here"
+
+# Default repository path (optional)
+export CASDOC_REPOPATH="/path/to/your/default/repo"
+```
+
+#### Windows (PowerShell)
+```powershell
+# Set environment variables
+$env:CASDOC_AUTHTOKEN="your_openai_api_key_here"
+$env:CASDOC_REPOPATH="C:\path\to\your\default\repo"
+```
+
+#### Windows (Command Prompt)
+```cmd
+set CASDOC_AUTHTOKEN=your_openai_api_key_here
+set CASDOC_REPOPATH=C:\path\to\your\default\repo
+```
+
+### 2. Verify Installation
+
+Test your CasDoc installation:
+
+```bash
+# Check if CasDoc is accessible
+which casdoc  # Should show the path to casdoc binary
+
+# Verify environment variables
+echo $CASDOC_AUTHTOKEN  # Should show your API key
+echo $CASDOC_REPOPATH   # Should show your repo path
+```
+
+### 3. Test with Sample Documentation
+
+Create a test setup:
+
+```bash
+# Create a test repository
+mkdir test-casdoc
+cd test-casdoc
+
+# Create a docs directory with sample content
+mkdir docs
+echo "# Test Document" > docs/test.md
+echo "This is a test document that needs polishing." >> docs/test.md
+
+# Set the repository path
+export CASDOC_REPOPATH=$(pwd)
+
+# Run CasDoc
+casdoc
+```
+
+## Configuration Files
+
+### Config.toml (Optional)
+
+CasDoc supports a configuration file for advanced settings:
+
+```toml
+# config.toml
+[general]
+api_timeout = 30
+max_retries = 3
+
+[openai]
+model = "gpt-3.5-turbo"
+temperature = 0.3
+
+[processing]
+batch_size = 5
+concurrent_workers = 2
+```
+
+Place this file in:
+- **Linux/macOS**: `~/.config/casdoc/config.toml`
+- **Windows**: `%APPDATA%\casdoc\config.toml`
+
+## Troubleshooting Installation
+
+### Common Issues
+
+#### "go: command not found"
+**Solution**: Install Go from [golang.org](https://golang.org/dl/)
+
+#### "Permission denied" on Linux/macOS
+**Solution**: Use `sudo` for system-wide installation or install to user directory:
+```bash
+# Install to user directory
+mkdir -p ~/bin
+go build -o ~/bin/casdoc
+echo 'export PATH=$PATH:~/bin' >> ~/.bashrc
+```
+
+#### "Module not found" errors
+**Solution**: Ensure you're using Go 1.19+ and run:
+```bash
+go mod tidy
+go mod download
+```
+
+#### Windows execution issues
+**Solution**: 
+1. Enable execution of Go binaries
+2. Add Go bin directory to Windows PATH
+3. Use PowerShell with execution policy set correctly
+
+### Getting Help
+
+If you encounter installation issues:
+
+1. **Check Requirements**: Verify all system requirements are met
+2. **Update Go**: Ensure you're using a supported Go version
+3. **Check Documentation**: Review this installation guide
+4. **GitHub Issues**: [Report installation problems](https://github.com/casbin/casdoc/issues)
+
+## Next Steps
+
+After successful installation:
+
+1. **[Configuration](/configuration)**: Set up advanced configuration options
+2. **[Getting Started](/getting-started)**: Complete the quick start guide
+3. **[Usage](/usage)**: Learn how to use CasDoc effectively
+
+## Uninstallation
+
+To remove CasDoc:
+
+### From Source Installation
+```bash
+# Remove binary
+sudo rm /usr/local/bin/casdoc
+
+# Remove configuration (optional)
+rm -rf ~/.config/casdoc
+```
+
+### From Go Install
+```bash
+# Remove from GOPATH
+rm $(go env GOPATH)/bin/casdoc
+```
+
+The installation is now complete! Continue to [Getting Started](/getting-started) to begin using CasDoc.
