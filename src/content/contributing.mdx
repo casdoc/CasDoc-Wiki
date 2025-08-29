@@ -1,3 +1,529 @@
 # Contributing
 
-*This section is under development. Please check back soon for contributing guidelines.*
+We welcome contributions to CasDoc! This guide will help you get started with contributing to the project, whether you're fixing bugs, adding features, or improving documentation.
+
+## Getting Started
+
+### Project Overview
+
+CasDoc is an open-source documentation helper tool that uses AI to polish and translate documentation. The project is written in Go and integrates with OpenAI's GPT models.
+
+**Repository**: [github.com/casbin/casdoc](https://github.com/casbin/casdoc)
+
+### Ways to Contribute
+
+- 🐛 **Bug Reports**: Report issues you encounter
+- ✨ **Feature Requests**: Suggest new features or improvements
+- 🔧 **Code Contributions**: Fix bugs or implement new features
+- 📚 **Documentation**: Improve documentation and examples
+- 🌍 **Translations**: Help translate the project documentation
+- 🧪 **Testing**: Add tests or improve test coverage
+
+## Development Setup
+
+### Prerequisites
+
+- **Go 1.19 or later**: [Download Go](https://golang.org/dl/)
+- **Git**: For version control
+- **OpenAI API Key**: For testing AI features
+- **Make** (optional): For using Makefile commands
+
+### Fork and Clone
+
+1. **Fork the repository** on GitHub
+2. **Clone your fork**:
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/casdoc.git
+   cd casdoc
+   ```
+
+3. **Add upstream remote**:
+   ```bash
+   git remote add upstream https://github.com/casbin/casdoc.git
+   ```
+
+### Local Development
+
+1. **Install dependencies**:
+   ```bash
+   go mod download
+   ```
+
+2. **Set up environment variables**:
+   ```bash
+   export CASDOC_AUTHTOKEN="your-test-api-key"
+   export CASDOC_REPOPATH="/path/to/test/docs"
+   ```
+
+3. **Build the project**:
+   ```bash
+   go build -o casdoc
+   ```
+
+4. **Run tests**:
+   ```bash
+   go test -v ./...
+   ```
+
+### Project Structure
+
+```
+casdoc/
+├── main.go              # Entry point
+├── config/              # Configuration handling
+├── utils/               # Utility functions
+├── prompt/              # AI prompt management
+├── logger/              # Logging functionality
+├── tests/               # Test files
+├── docs/                # Project documentation
+├── go.mod               # Go module definition
+├── go.sum               # Go module checksums
+├── Makefile            # Build and development commands
+└── README.md           # Project README
+```
+
+## Development Workflow
+
+### 1. Choose an Issue
+
+- Browse [open issues](https://github.com/casbin/casdoc/issues)
+- Look for issues labeled `good first issue` for beginners
+- Comment on the issue to indicate you're working on it
+
+### 2. Create a Branch
+
+```bash
+# Create and switch to a new branch
+git checkout -b feature/your-feature-name
+
+# Or for bug fixes
+git checkout -b fix/issue-description
+```
+
+### 3. Make Changes
+
+#### Code Style Guidelines
+
+- Follow standard Go formatting (`gofmt`)
+- Use meaningful variable and function names
+- Add comments for public functions and complex logic
+- Keep functions small and focused
+
+#### Example Code Structure
+
+```go
+// Package documentation
+package utils
+
+import (
+    "context"
+    "fmt"
+    
+    log "github.com/sirupsen/logrus"
+)
+
+// Polish improves the quality of documentation content
+func Polish(filePath string) error {
+    // Validate input
+    if filePath == "" {
+        return fmt.Errorf("file path cannot be empty")
+    }
+    
+    // Log the operation
+    log.WithField("file", filePath).Info("Starting to polish document")
+    
+    // Implementation
+    // ...
+    
+    return nil
+}
+```
+
+### 4. Add Tests
+
+Create tests for your changes:
+
+```go
+// utils/polish_test.go
+package utils
+
+import (
+    "testing"
+    "os"
+    "path/filepath"
+)
+
+func TestPolish(t *testing.T) {
+    // Create temporary test file
+    tempDir := t.TempDir()
+    testFile := filepath.Join(tempDir, "test.md")
+    
+    content := "# Test Document\nThis is a test document with some errors."
+    err := os.WriteFile(testFile, []byte(content), 0644)
+    if err != nil {
+        t.Fatalf("Failed to create test file: %v", err)
+    }
+    
+    // Test the Polish function
+    err = Polish(testFile)
+    if err != nil {
+        t.Errorf("Polish failed: %v", err)
+    }
+    
+    // Verify the result
+    // ...
+}
+```
+
+### 5. Test Your Changes
+
+```bash
+# Run all tests
+go test -v ./...
+
+# Run tests with coverage
+go test -coverprofile=coverage.out ./...
+go tool cover -html=coverage.out
+
+# Run specific tests
+go test -v ./utils -run TestPolish
+
+# Build and test the binary
+go build && ./casdoc --test-connection
+```
+
+### 6. Update Documentation
+
+If your changes affect user-facing functionality:
+
+- Update relevant documentation files
+- Add examples if applicable
+- Update the README if needed
+
+### 7. Commit Your Changes
+
+```bash
+# Stage your changes
+git add .
+
+# Commit with descriptive message
+git commit -m "feat: add support for custom AI prompts
+
+- Add prompt customization in config file
+- Implement prompt validation
+- Add tests for custom prompts
+- Update documentation
+
+Closes #123"
+```
+
+#### Commit Message Format
+
+We follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+
+```
+<type>[optional scope]: <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+**Types**:
+- `feat`: A new feature
+- `fix`: A bug fix
+- `docs`: Documentation only changes
+- `style`: Changes that don't affect the meaning of the code
+- `refactor`: A code change that neither fixes a bug nor adds a feature
+- `perf`: A code change that improves performance
+- `test`: Adding missing tests or correcting existing tests
+- `chore`: Changes to the build process or auxiliary tools
+
+### 8. Push and Create Pull Request
+
+```bash
+# Push to your fork
+git push origin feature/your-feature-name
+
+# Create pull request on GitHub
+```
+
+## Pull Request Guidelines
+
+### Before Submitting
+
+- [ ] Code follows project style guidelines
+- [ ] Tests pass locally
+- [ ] New functionality includes tests
+- [ ] Documentation is updated
+- [ ] Commit messages follow conventional format
+- [ ] No merge conflicts with main branch
+
+### Pull Request Template
+
+When creating a pull request, include:
+
+```markdown
+## Description
+Brief description of the changes.
+
+## Type of Change
+- [ ] Bug fix (non-breaking change which fixes an issue)
+- [ ] New feature (non-breaking change which adds functionality)
+- [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] Documentation update
+
+## Testing
+- [ ] Tests pass locally
+- [ ] New tests added for new functionality
+- [ ] Manual testing completed
+
+## Checklist
+- [ ] My code follows the style guidelines
+- [ ] I have performed a self-review of my code
+- [ ] I have commented my code, particularly in hard-to-understand areas
+- [ ] I have made corresponding changes to the documentation
+- [ ] My changes generate no new warnings
+
+## Related Issues
+Closes #(issue_number)
+```
+
+### Review Process
+
+1. **Automated Checks**: CI/CD will run tests and linting
+2. **Maintainer Review**: Project maintainers will review your code
+3. **Feedback**: Address any feedback or requested changes
+4. **Approval**: Once approved, your PR will be merged
+
+## Code Style and Standards
+
+### Go Standards
+
+```go
+// Good: Clear, descriptive names
+func ProcessDocumentationFile(filePath string, options *ProcessingOptions) error {
+    if filePath == "" {
+        return errors.New("file path is required")
+    }
+    
+    // Process the file
+    return nil
+}
+
+// Bad: Unclear names and no error handling
+func proc(f string) {
+    // ...
+}
+```
+
+### Error Handling
+
+```go
+// Good: Detailed error with context
+func readFile(path string) ([]byte, error) {
+    data, err := os.ReadFile(path)
+    if err != nil {
+        return nil, fmt.Errorf("failed to read file %s: %w", path, err)
+    }
+    return data, nil
+}
+
+// Bad: Generic error
+func readFile(path string) []byte {
+    data, _ := os.ReadFile(path)
+    return data
+}
+```
+
+### Logging
+
+```go
+// Good: Structured logging with context
+log.WithFields(log.Fields{
+    "file": filePath,
+    "size": fileSize,
+    "duration": processingTime,
+}).Info("Document processing completed")
+
+// Bad: Unstructured logging
+log.Info("File processed")
+```
+
+## Testing Guidelines
+
+### Unit Tests
+
+- Test individual functions and methods
+- Use table-driven tests for multiple scenarios
+- Include edge cases and error conditions
+
+```go
+func TestProcessDocument(t *testing.T) {
+    tests := []struct {
+        name    string
+        input   string
+        want    string
+        wantErr bool
+    }{
+        {
+            name:    "valid document",
+            input:   "# Hello\nThis is a test.",
+            want:    "# Hello\nThis is a well-formatted test.",
+            wantErr: false,
+        },
+        {
+            name:    "empty document",
+            input:   "",
+            want:    "",
+            wantErr: true,
+        },
+    }
+    
+    for _, tt := range tests {
+        t.Run(tt.name, func(t *testing.T) {
+            got, err := ProcessDocument(tt.input)
+            if (err != nil) != tt.wantErr {
+                t.Errorf("ProcessDocument() error = %v, wantErr %v", err, tt.wantErr)
+                return
+            }
+            if got != tt.want {
+                t.Errorf("ProcessDocument() = %v, want %v", got, tt.want)
+            }
+        })
+    }
+}
+```
+
+### Integration Tests
+
+- Test complete workflows
+- Use temporary directories and files
+- Mock external dependencies when appropriate
+
+### Test Coverage
+
+Aim for good test coverage:
+
+```bash
+# Check coverage
+go test -coverprofile=coverage.out ./...
+go tool cover -func=coverage.out
+
+# Generate HTML coverage report
+go tool cover -html=coverage.out -o coverage.html
+```
+
+## Documentation Guidelines
+
+### Code Documentation
+
+```go
+// Package config provides configuration management for CasDoc.
+//
+// This package handles loading configuration from environment variables,
+// configuration files, and command-line arguments with proper precedence.
+package config
+
+// Config represents the application configuration.
+type Config struct {
+    // AuthToken is the OpenAI API authentication token.
+    AuthToken string `toml:"auth_token"`
+    
+    // RepoPath is the path to the documentation repository.
+    RepoPath string `toml:"repo_path"`
+}
+
+// Load reads configuration from multiple sources and returns a Config struct.
+// The configuration is loaded in the following order of precedence:
+// 1. Command-line flags
+// 2. Environment variables
+// 3. Configuration file
+// 4. Default values
+func Load() (*Config, error) {
+    // Implementation
+}
+```
+
+### User Documentation
+
+- Use clear, concise language
+- Include practical examples
+- Provide step-by-step instructions
+- Keep documentation up-to-date with code changes
+
+## Release Process
+
+### Version Numbering
+
+We follow [Semantic Versioning](https://semver.org/):
+
+- `MAJOR.MINOR.PATCH`
+- MAJOR: Breaking changes
+- MINOR: New features (backward compatible)
+- PATCH: Bug fixes (backward compatible)
+
+### Release Checklist
+
+- [ ] All tests pass
+- [ ] Documentation updated
+- [ ] CHANGELOG.md updated
+- [ ] Version number incremented
+- [ ] Git tag created
+- [ ] Release notes prepared
+
+## Community Guidelines
+
+### Code of Conduct
+
+We follow the [Contributor Covenant Code of Conduct](https://www.contributor-covenant.org/). Please be respectful and inclusive.
+
+### Communication
+
+- **GitHub Issues**: For bug reports and feature requests
+- **GitHub Discussions**: For general questions and community discussions
+- **Pull Requests**: For code reviews and technical discussions
+
+### Getting Help
+
+If you need help:
+
+1. Check existing documentation
+2. Search closed issues for similar problems
+3. Ask in GitHub Discussions
+4. Create a new issue with detailed information
+
+## Recognition
+
+Contributors are recognized in:
+
+- CONTRIBUTORS.md file
+- Release notes
+- Project README
+
+## License
+
+By contributing to CasDoc, you agree that your contributions will be licensed under the Apache 2.0 License.
+
+## Resources
+
+### Development Tools
+
+- **Visual Studio Code**: Recommended editor with Go extension
+- **GoLand**: JetBrains IDE for Go
+- **GitHub CLI**: For managing pull requests from command line
+
+### Learning Resources
+
+- [Effective Go](https://golang.org/doc/effective_go.html)
+- [Go Code Review Comments](https://github.com/golang/go/wiki/CodeReviewComments)
+- [OpenAI API Documentation](https://platform.openai.com/docs)
+
+### Project Links
+
+- **Main Repository**: [github.com/casbin/casdoc](https://github.com/casbin/casdoc)
+- **Issue Tracker**: [GitHub Issues](https://github.com/casbin/casdoc/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/casbin/casdoc/discussions)
+- **Wiki Documentation**: [wiki.casdoc.io](https://wiki.casdoc.io)
+
+Thank you for contributing to CasDoc! Your efforts help make documentation better for everyone. 🚀

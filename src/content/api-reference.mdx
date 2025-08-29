@@ -1,3 +1,547 @@
 # API Reference
 
-*This section is under development. Please check back soon for detailed API reference.*
+Complete reference for all CasDoc command-line interface options, configuration parameters, and programmatic usage.
+
+## Command Line Interface
+
+### Basic Usage
+
+```bash
+casdoc [OPTIONS] [COMMAND]
+```
+
+### Commands
+
+#### Polish (Default)
+Polish documentation files for improved quality and clarity.
+
+```bash
+casdoc
+casdoc polish
+```
+
+**Description**: Processes all markdown files in the `docs/` directory to improve grammar, clarity, and readability while preserving technical accuracy.
+
+#### Translate
+Translate documentation into multiple languages.
+
+```bash
+casdoc translate [OPTIONS]
+casdoc --translate [OPTIONS]
+```
+
+**Options for translate command**:
+- `--languages LANG1,LANG2`: Specify target languages
+- `--all-languages`: Translate to all supported languages
+- `--preserve-original`: Keep original files during translation
+- `--output-dir DIR`: Output translations to specific directory
+
+### Global Options
+
+#### Authentication
+```bash
+--auth-token TOKEN        OpenAI API authentication token
+```
+**Environment variable**: `CASDOC_AUTHTOKEN`
+
+#### Repository Configuration
+```bash
+--repo-path PATH          Path to documentation repository
+--path PATH              Custom path to documentation directory
+```
+**Environment variables**: `CASDOC_REPOPATH`
+
+#### AI Model Configuration
+```bash
+--model MODEL            OpenAI model to use (default: gpt-3.5-turbo)
+--temperature FLOAT      AI creativity level (0.0-1.0, default: 0.3)
+--max-tokens INTEGER     Maximum tokens per request (default: 2000)
+```
+**Environment variables**: `CASDOC_MODEL`, `CASDOC_TEMPERATURE`, `CASDOC_MAX_TOKENS`
+
+#### Processing Options
+```bash
+--batch-size INTEGER     Number of files to process in parallel (default: 5)
+--concurrent-workers INT Number of concurrent workers (default: 2)
+--max-file-size SIZE     Maximum file size to process (default: 1MB)
+```
+
+#### Output Control
+```bash
+--verbose, -v            Enable verbose output
+--quiet, -q              Suppress all output except errors
+--dry-run                Show what would be processed without making changes
+--output-format FORMAT   Output format for reports (json, yaml, text)
+```
+
+#### File Management
+```bash
+--create-backups         Create backup files before processing (default: true)
+--backup-suffix SUFFIX   Suffix for backup files (default: .bak)
+--preserve-formatting    Maintain original markdown formatting
+```
+
+#### Configuration
+```bash
+--config FILE            Path to configuration file
+--no-config              Ignore configuration files
+```
+
+### Advanced Options
+
+#### Rate Limiting
+```bash
+--requests-per-minute INT    API requests per minute limit (default: 60)
+--request-delay MILLISEC     Delay between requests in milliseconds
+```
+
+#### File Filtering
+```bash
+--include PATTERNS       Include only files matching patterns
+--exclude PATTERNS       Exclude files matching patterns
+--min-file-size SIZE     Minimum file size to process
+```
+
+#### Error Handling
+```bash
+--max-retries INTEGER    Maximum retry attempts for failed requests (default: 3)
+--skip-errors            Continue processing on errors
+--retry-failed           Retry previously failed files only
+```
+
+#### Testing and Validation
+```bash
+--test-connection        Test OpenAI API connectivity
+--validate-config        Validate configuration and exit
+--check-syntax           Check markdown syntax before processing
+```
+
+## Exit Codes
+
+| Code | Description |
+|------|-------------|
+| 0    | Success |
+| 1    | General error |
+| 2    | Configuration error |
+| 3    | Authentication error |
+| 4    | Network/API error |
+| 5    | File system error |
+| 6    | Processing error |
+
+## Environment Variables
+
+### Required Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `CASDOC_AUTHTOKEN` | OpenAI API token | `sk-...` |
+
+### Optional Variables
+
+| Variable | Description | Default | Example |
+|----------|-------------|---------|---------|
+| `CASDOC_REPOPATH` | Repository path | Current directory | `/path/to/repo` |
+| `CASDOC_MODEL` | OpenAI model | `gpt-3.5-turbo` | `gpt-4` |
+| `CASDOC_TEMPERATURE` | AI temperature | `0.3` | `0.1` |
+| `CASDOC_MAX_TOKENS` | Token limit | `2000` | `4000` |
+| `CASDOC_BATCH_SIZE` | Batch size | `5` | `10` |
+| `CASDOC_WORKERS` | Concurrent workers | `2` | `4` |
+| `CASDOC_TIMEOUT` | API timeout (seconds) | `30` | `60` |
+| `CASDOC_RETRIES` | Max retries | `3` | `5` |
+
+## Configuration File Reference
+
+### File Locations
+
+Configuration files are loaded in this order:
+1. File specified by `--config` option
+2. `./config.toml` (current directory)
+3. `~/.config/casdoc/config.toml` (user config)
+4. `/etc/casdoc/config.toml` (system config)
+
+### Configuration Schema
+
+```toml
+[general]
+# API request timeout in seconds
+api_timeout = 30
+
+# Maximum retry attempts for failed requests
+max_retries = 3
+
+# Enable verbose logging
+verbose = false
+
+# Create backup files before processing
+create_backups = true
+
+[openai]
+# OpenAI model to use
+model = "gpt-3.5-turbo"
+
+# Temperature for AI responses (0.0-1.0)
+temperature = 0.3
+
+# Maximum tokens per request
+max_tokens = 2000
+
+# API base URL (for custom endpoints)
+base_url = "https://api.openai.com/v1"
+
+# Organization ID (optional)
+organization = ""
+
+[processing]
+# Number of files to process in parallel
+batch_size = 5
+
+# Maximum concurrent workers
+concurrent_workers = 2
+
+# Skip files larger than this size (in bytes)
+max_file_size = 1048576  # 1MB
+
+# Minimum file size to process (in bytes)
+min_file_size = 100
+
+[translation]
+# Default target languages for translation
+default_languages = ["zh", "fr", "de"]
+
+# Preserve code blocks during translation
+preserve_code = true
+
+# Preserve links during translation
+preserve_links = true
+
+# Output directory for translations
+output_dir = "./translations"
+
+[polishing]
+# Focus areas for document polishing
+focus_areas = ["grammar", "clarity", "consistency"]
+
+# Preserve original formatting
+preserve_formatting = true
+
+# Add explanatory comments
+add_comments = false
+
+[rate_limiting]
+# Requests per minute
+requests_per_minute = 60
+
+# Pause between requests (milliseconds)
+request_delay = 1000
+
+[output]
+# Backup file suffix
+backup_suffix = ".bak"
+
+# Output encoding
+encoding = "utf-8"
+
+# Enable colored output
+colored_output = true
+
+[filters]
+# Include only these file extensions
+include_extensions = [".md", ".mdx", ".txt"]
+
+# Exclude these patterns (glob patterns)
+exclude_patterns = [
+    "**/node_modules/**",
+    "**/vendor/**",
+    "**/.git/**",
+    "**/dist/**"
+]
+
+[prompts]
+# Custom prompt for document polishing
+polish_prompt = """
+Improve this documentation by:
+1. Fixing grammar and spelling errors
+2. Enhancing clarity and readability
+3. Ensuring consistent terminology
+4. Maintaining technical accuracy
+5. Preserving all formatting and links
+
+Content: {content}
+"""
+
+# Custom prompt for translation
+translate_prompt = """
+Translate this technical documentation to {language}.
+Preserve:
+- All code blocks and examples
+- Technical terminology
+- Link structures
+- Formatting
+
+Content: {content}
+"""
+
+[logging]
+# Log level (debug, info, warn, error)
+level = "info"
+
+# Log file path
+file = "./casdoc.log"
+
+# Enable log rotation
+rotate = true
+
+# Maximum log file size before rotation
+max_size = "10MB"
+
+# Number of old log files to keep
+max_backups = 5
+```
+
+## API Integration
+
+### Go API (Future)
+
+*Note: Programmatic API is planned for future releases.*
+
+```go
+package main
+
+import (
+    "github.com/casbin/casdoc/pkg/casdoc"
+)
+
+func main() {
+    config := &casdoc.Config{
+        AuthToken:   "your-api-key",
+        RepoPath:    "/path/to/docs",
+        Model:       "gpt-3.5-turbo",
+        Temperature: 0.3,
+    }
+    
+    processor := casdoc.New(config)
+    
+    // Polish documentation
+    result, err := processor.Polish()
+    if err != nil {
+        // Handle error
+    }
+    
+    // Translate documentation
+    translations, err := processor.Translate([]string{"zh", "fr"})
+    if err != nil {
+        // Handle error
+    }
+}
+```
+
+### HTTP API (Future)
+
+*Note: HTTP API is planned for future releases.*
+
+```bash
+# Start CasDoc server
+casdoc serve --port 8080
+
+# Polish documentation via HTTP
+curl -X POST http://localhost:8080/api/v1/polish \
+  -H "Authorization: Bearer your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "repo_path": "/path/to/docs",
+    "options": {
+      "model": "gpt-3.5-turbo",
+      "temperature": 0.3
+    }
+  }'
+
+# Translate documentation via HTTP
+curl -X POST http://localhost:8080/api/v1/translate \
+  -H "Authorization: Bearer your-api-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "repo_path": "/path/to/docs",
+    "languages": ["zh", "fr", "de"],
+    "options": {
+      "preserve_original": true
+    }
+  }'
+```
+
+## Response Formats
+
+### Success Response
+```json
+{
+  "status": "success",
+  "message": "Documentation processed successfully",
+  "data": {
+    "files_processed": 25,
+    "files_failed": 0,
+    "total_tokens_used": 15000,
+    "processing_time": "5m 32s",
+    "estimated_cost": "$0.15"
+  }
+}
+```
+
+### Error Response
+```json
+{
+  "status": "error",
+  "message": "Authentication failed",
+  "error_code": "AUTH_FAILED",
+  "details": {
+    "type": "authentication_error",
+    "description": "Invalid API key provided"
+  }
+}
+```
+
+## Error Handling
+
+### Common Error Codes
+
+| Code | Description | Solution |
+|------|-------------|----------|
+| `CONFIG_ERROR` | Configuration file error | Check config syntax |
+| `AUTH_FAILED` | Authentication failed | Verify API key |
+| `NETWORK_ERROR` | Network connectivity issue | Check internet connection |
+| `API_LIMIT` | API rate limit exceeded | Reduce request rate |
+| `FILE_ERROR` | File system error | Check permissions |
+| `PROCESSING_ERROR` | Document processing failed | Check document format |
+
+### Error Recovery
+
+```bash
+# Retry failed files only
+casdoc --retry-failed
+
+# Skip problematic files and continue
+casdoc --skip-errors
+
+# Process with lower rate limits
+casdoc --requests-per-minute 30 --request-delay 2000
+```
+
+## Performance Tuning
+
+### Optimal Settings for Different Scenarios
+
+#### Small Projects (< 50 files)
+```toml
+[processing]
+batch_size = 3
+concurrent_workers = 1
+
+[rate_limiting]
+requests_per_minute = 60
+```
+
+#### Medium Projects (50-200 files)
+```toml
+[processing]
+batch_size = 5
+concurrent_workers = 2
+
+[rate_limiting]
+requests_per_minute = 45
+```
+
+#### Large Projects (> 200 files)
+```toml
+[processing]
+batch_size = 10
+concurrent_workers = 3
+
+[rate_limiting]
+requests_per_minute = 30
+request_delay = 2000
+```
+
+### Memory Usage
+
+| Configuration | Memory Usage | Recommended For |
+|---------------|-------------|-----------------|
+| Single worker | 50-100 MB | Small projects |
+| 2 workers | 100-200 MB | Medium projects |
+| 3+ workers | 200-500 MB | Large projects |
+
+## Integration Examples
+
+### Makefile Integration
+```makefile
+.PHONY: docs-polish docs-translate docs-update
+
+docs-polish:
+	casdoc --verbose
+
+docs-translate:
+	casdoc --translate --languages zh,fr,de
+
+docs-update: docs-polish docs-translate
+	git add docs/
+	git commit -m "docs: Update documentation"
+
+docs-qa:
+	casdoc --dry-run --verbose
+```
+
+### NPM Scripts Integration
+```json
+{
+  "scripts": {
+    "docs:polish": "casdoc --verbose",
+    "docs:translate": "casdoc --translate --all-languages",
+    "docs:check": "casdoc --dry-run",
+    "docs:update": "npm run docs:polish && npm run docs:translate"
+  }
+}
+```
+
+### Docker Integration
+```dockerfile
+FROM golang:1.21-alpine AS builder
+RUN go install github.com/casbin/casdoc@latest
+
+FROM alpine:latest
+RUN apk --no-cache add ca-certificates
+COPY --from=builder /go/bin/casdoc /usr/local/bin/
+ENTRYPOINT ["casdoc"]
+```
+
+## Troubleshooting
+
+### Debug Information
+```bash
+# Enable maximum verbosity
+casdoc --verbose --debug
+
+# Test configuration
+casdoc --validate-config
+
+# Test API connectivity
+casdoc --test-connection
+
+# Generate diagnostic report
+casdoc --diagnostic --output-format json > diagnostic.json
+```
+
+### Log Analysis
+```bash
+# View recent logs
+tail -f ~/.config/casdoc/casdoc.log
+
+# Search for errors
+grep "ERROR" ~/.config/casdoc/casdoc.log
+
+# Analyze API usage
+grep "API_CALL" ~/.config/casdoc/casdoc.log | wc -l
+```
+
+## Next Steps
+
+- **[Examples](/examples)**: See practical usage examples
+- **[Configuration](/configuration)**: Detailed configuration guide
+- **[Contributing](/contributing)**: Contribute to CasDoc development
+- **[FAQ](/faq)**: Common questions and solutions

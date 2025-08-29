@@ -1,3 +1,524 @@
 # FAQ & Troubleshooting
 
-*This section is under development. Please check back soon for FAQ and troubleshooting information.*
+Common questions, issues, and solutions for using CasDoc effectively.
+
+## Frequently Asked Questions
+
+### General Questions
+
+#### What is CasDoc?
+CasDoc is an AI-powered documentation helper tool that automatically polishes and translates documentation using OpenAI's GPT models. It's designed to improve documentation quality and make it accessible to global audiences.
+
+#### How much does it cost to use CasDoc?
+CasDoc itself is free and open-source. However, you'll need an OpenAI API key, and costs depend on your usage:
+- **GPT-3.5 Turbo**: ~$0.002 per 1K tokens (most cost-effective)
+- **GPT-4**: ~$0.03 per 1K tokens (higher quality)
+- A typical documentation file (1000 words) costs approximately $0.01-0.05 to process
+
+#### Is my documentation data secure?
+Yes, your documentation is processed securely:
+- Data is sent to OpenAI's API over HTTPS
+- CasDoc doesn't store your content permanently
+- OpenAI's data usage policies apply
+- Consider using environment-specific API keys for sensitive projects
+
+#### What file formats does CasDoc support?
+Currently supported formats:
+- **Markdown** (`.md`) - Primary format
+- **MDX** (`.mdx`) - Markdown with React components
+- **Text files** (`.txt`) - Basic text documentation
+
+### Setup and Configuration
+
+#### How do I get an OpenAI API key?
+1. Visit [OpenAI Platform](https://platform.openai.com)
+2. Sign up or log in to your account
+3. Navigate to "API Keys" in your dashboard
+4. Click "Create new secret key"
+5. Copy and securely store your API key
+
+#### Where should I store my API key?
+**Recommended approaches:**
+```bash
+# Environment variable (recommended)
+export CASDOC_AUTHTOKEN="your-api-key"
+
+# Configuration file (secure the file)
+chmod 600 ~/.config/casdoc/config.toml
+
+# CI/CD secrets (for automation)
+# Use your platform's secret management
+```
+
+**Avoid:**
+- Hardcoding in scripts
+- Committing to version control
+- Sharing in plain text
+
+#### Can I use CasDoc without an internet connection?
+No, CasDoc requires internet connectivity to access OpenAI's API. Consider:
+- Processing documentation before going offline
+- Using a local network with internet access
+- Setting up a proxy if needed
+
+### Usage Questions
+
+#### How do I process only specific files?
+Several options are available:
+
+```bash
+# Process specific directory
+casdoc --path docs/specific-section/
+
+# Use file patterns
+casdoc --include "*.md" --exclude "**/draft/**"
+
+# Create a custom script
+find docs/ -name "README.md" -type f > filelist.txt
+# Then process the list programmatically
+```
+
+#### Can I customize the AI prompts?
+Yes, you can customize prompts in your configuration file:
+
+```toml
+[prompts]
+polish_prompt = """
+Improve this documentation by:
+1. Your custom instructions here
+2. Specific requirements
+3. Format preferences
+
+Content: {content}
+"""
+```
+
+#### How do I handle large documentation sets?
+For large projects:
+
+```toml
+[processing]
+batch_size = 10          # Process more files in parallel
+concurrent_workers = 3   # Use more workers
+
+[rate_limiting]
+requests_per_minute = 30 # Reduce to avoid rate limits
+request_delay = 2000     # Add delay between requests
+```
+
+#### Can I undo CasDoc changes?
+Yes, several recovery options:
+
+1. **Git version control** (recommended):
+   ```bash
+   git checkout docs/  # Revert all changes
+   git checkout docs/specific-file.md  # Revert specific file
+   ```
+
+2. **Automatic backups**:
+   ```bash
+   # CasDoc creates .bak files by default
+   cp docs/file.md.bak docs/file.md
+   ```
+
+3. **Manual backups**:
+   ```bash
+   # Create backup before processing
+   cp -r docs/ docs.backup/
+   ```
+
+### Translation Questions
+
+#### Which languages are supported?
+Currently supported languages:
+- Chinese (Simplified) - `zh`
+- French - `fr`
+- German - `de`
+- Korean - `ko`
+- Russian - `ru`
+- Japanese - `ja`
+
+More languages are planned for future releases.
+
+#### How accurate are the translations?
+Translation quality depends on:
+- **Content complexity**: Simple documentation translates better
+- **Technical terminology**: May require review for domain-specific terms
+- **Context**: AI understands context but manual review is recommended
+- **Source quality**: Better source documentation produces better translations
+
+#### Can I improve translation quality?
+Yes, several approaches:
+
+1. **Use higher-quality models**:
+   ```bash
+   export CASDOC_MODEL="gpt-4"
+   ```
+
+2. **Lower temperature for consistency**:
+   ```bash
+   export CASDOC_TEMPERATURE="0.1"
+   ```
+
+3. **Custom translation prompts**:
+   ```toml
+   [prompts]
+   translate_prompt = "Translate this technical documentation to {language}, preserving all technical terms and code examples..."
+   ```
+
+4. **Post-translation review**: Always review translations for accuracy
+
+### Performance Questions
+
+#### Why is CasDoc slow?
+Common reasons and solutions:
+
+1. **Large files**: 
+   ```bash
+   # Set file size limits
+   casdoc --max-file-size 1MB
+   ```
+
+2. **API rate limits**:
+   ```bash
+   # Reduce request rate
+   casdoc --requests-per-minute 30
+   ```
+
+3. **Network latency**:
+   - Check internet connection
+   - Consider processing during off-peak hours
+
+4. **Too many concurrent workers**:
+   ```bash
+   # Reduce parallelism
+   casdoc --concurrent-workers 1
+   ```
+
+#### How can I monitor processing progress?
+Use verbose mode for detailed progress:
+
+```bash
+casdoc --verbose
+
+# Output example:
+# Now polish: docs/README.md (1/25)
+# Now polish: docs/guide.md (2/25)
+# ✓ Completed: docs/README.md
+# ✗ Failed: docs/complex.md (retrying...)
+```
+
+## Troubleshooting
+
+### Authentication Issues
+
+#### Error: "Authentication failed with OpenAI API"
+
+**Possible causes:**
+- Invalid API key
+- Expired API key
+- Insufficient API credits
+- Network connectivity issues
+
+**Solutions:**
+1. **Verify API key**:
+   ```bash
+   echo $CASDOC_AUTHTOKEN  # Should show your key
+   ```
+
+2. **Test API connectivity**:
+   ```bash
+   casdoc --test-connection
+   ```
+
+3. **Check OpenAI account**:
+   - Log in to OpenAI Platform
+   - Verify API key is active
+   - Check billing and usage
+
+4. **Update API key**:
+   ```bash
+   export CASDOC_AUTHTOKEN="new-api-key"
+   ```
+
+### File Processing Issues
+
+#### Error: "Failed to get file list"
+
+**Possible causes:**
+- Incorrect repository path
+- Missing `docs/` directory
+- Permission issues
+- Path contains special characters
+
+**Solutions:**
+1. **Verify repository path**:
+   ```bash
+   echo $CASDOC_REPOPATH
+   ls -la $CASDOC_REPOPATH/docs/
+   ```
+
+2. **Check directory structure**:
+   ```bash
+   # CasDoc expects this structure:
+   your-repo/
+   └── docs/
+       ├── README.md
+       └── other-files.md
+   ```
+
+3. **Fix permissions**:
+   ```bash
+   chmod -R 755 docs/
+   ```
+
+4. **Use absolute paths**:
+   ```bash
+   export CASDOC_REPOPATH="/full/path/to/your/repo"
+   ```
+
+#### Error: "No files found to process"
+
+**Possible causes:**
+- No markdown files in docs directory
+- Files excluded by filters
+- Incorrect file extensions
+
+**Solutions:**
+1. **Check file extensions**:
+   ```bash
+   find docs/ -name "*.md" -o -name "*.mdx"
+   ```
+
+2. **Review filters**:
+   ```bash
+   # Check if files are being excluded
+   casdoc --dry-run --verbose
+   ```
+
+3. **Adjust include patterns**:
+   ```bash
+   casdoc --include "*.md,*.mdx,*.txt"
+   ```
+
+### Network and API Issues
+
+#### Error: "Request timeout" or "Network error"
+
+**Solutions:**
+1. **Check internet connection**:
+   ```bash
+   ping api.openai.com
+   ```
+
+2. **Increase timeout**:
+   ```toml
+   [general]
+   api_timeout = 60  # Increase from default 30 seconds
+   ```
+
+3. **Check firewall/proxy settings**:
+   - Ensure HTTPS traffic to api.openai.com is allowed
+   - Configure proxy if needed
+
+4. **Retry with delays**:
+   ```bash
+   casdoc --max-retries 5 --request-delay 3000
+   ```
+
+#### Error: "Rate limit exceeded"
+
+**Solutions:**
+1. **Reduce request rate**:
+   ```bash
+   casdoc --requests-per-minute 20 --request-delay 3000
+   ```
+
+2. **Process in smaller batches**:
+   ```bash
+   casdoc --batch-size 3 --concurrent-workers 1
+   ```
+
+3. **Check API usage**:
+   - Review usage in OpenAI dashboard
+   - Upgrade plan if needed
+
+### Quality Issues
+
+#### Poor output quality or irrelevant changes
+
+**Solutions:**
+1. **Adjust AI settings**:
+   ```bash
+   # More conservative/consistent output
+   export CASDOC_TEMPERATURE="0.1"
+   
+   # Use higher quality model
+   export CASDOC_MODEL="gpt-4"
+   ```
+
+2. **Custom prompts**:
+   ```toml
+   [prompts]
+   polish_prompt = """
+   Improve this documentation by only:
+   1. Fixing obvious grammar errors
+   2. Improving unclear sentences
+   3. Maintaining all technical accuracy
+   
+   Content: {content}
+   """
+   ```
+
+3. **Review settings**:
+   ```bash
+   # Check current configuration
+   casdoc --validate-config
+   ```
+
+#### Formatted content gets corrupted
+
+**Solutions:**
+1. **Enable format preservation**:
+   ```toml
+   [polishing]
+   preserve_formatting = true
+   ```
+
+2. **Check file encoding**:
+   ```bash
+   file docs/*.md  # Should show UTF-8
+   ```
+
+3. **Test with sample files**:
+   ```bash
+   # Test on a copy first
+   cp docs/important.md test.md
+   export CASDOC_REPOPATH="$(pwd)"
+   # Create a docs directory with just test.md
+   ```
+
+### Installation Issues
+
+#### Error: "casdoc: command not found"
+
+**Solutions:**
+1. **Verify installation**:
+   ```bash
+   which casdoc
+   go version  # Ensure Go is installed
+   ```
+
+2. **Reinstall CasDoc**:
+   ```bash
+   go install github.com/casbin/casdoc@latest
+   ```
+
+3. **Check PATH**:
+   ```bash
+   echo $PATH | grep $(go env GOPATH)/bin
+   # If not found, add to PATH:
+   echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> ~/.bashrc
+   source ~/.bashrc
+   ```
+
+4. **Build from source**:
+   ```bash
+   git clone https://github.com/casbin/casdoc.git
+   cd casdoc
+   go build -o casdoc
+   sudo mv casdoc /usr/local/bin/
+   ```
+
+#### Permission denied errors
+
+**Solutions:**
+1. **Check file permissions**:
+   ```bash
+   ls -la docs/
+   chmod 644 docs/*.md  # Make files writable
+   ```
+
+2. **Check directory permissions**:
+   ```bash
+   chmod 755 docs/
+   ```
+
+3. **Run with appropriate user**:
+   ```bash
+   # Don't run as root unless necessary
+   # Ensure user owns the documentation files
+   chown -R $USER:$USER docs/
+   ```
+
+### Configuration Issues
+
+#### Error: "Invalid configuration file"
+
+**Solutions:**
+1. **Validate TOML syntax**:
+   ```bash
+   # Use online TOML validator or:
+   python3 -c "import tomllib; tomllib.load(open('config.toml', 'rb'))"
+   ```
+
+2. **Check file location**:
+   ```bash
+   # Expected locations:
+   ls -la config.toml
+   ls -la ~/.config/casdoc/config.toml
+   ```
+
+3. **Start with minimal config**:
+   ```toml
+   [general]
+   verbose = true
+   
+   [openai]
+   model = "gpt-3.5-turbo"
+   ```
+
+## Getting Additional Help
+
+### Debug Information
+
+When seeking help, provide:
+
+```bash
+# Generate diagnostic information
+casdoc --version
+casdoc --validate-config
+echo "OS: $(uname -a)"
+echo "Go version: $(go version)"
+echo "CASDOC_REPOPATH: $CASDOC_REPOPATH"
+echo "Working directory: $(pwd)"
+ls -la docs/ | head -10
+```
+
+### Reporting Issues
+
+When reporting bugs, include:
+1. **Version information**: `casdoc --version`
+2. **Error messages**: Full error output
+3. **Configuration**: Relevant config (redact API keys)
+4. **Steps to reproduce**: Exact commands used
+5. **Environment**: OS, Go version, file structure
+
+### Community Support
+
+- **GitHub Issues**: [Report bugs and request features](https://github.com/casbin/casdoc/issues)
+- **Discussions**: [Ask questions and share experiences](https://github.com/casbin/casdoc/discussions)
+- **Documentation**: [Browse this wiki](https://wiki.casdoc.io)
+
+### Professional Support
+
+For enterprise or commercial support needs, consider:
+- **Custom development**: Feature development for specific needs
+- **Integration support**: Help integrating CasDoc into your workflow
+- **Training**: Team training on best practices
+
+Contact the Casbin organization for enterprise support options.
+
+---
+
+If you don't find your issue here, please [create a new issue](https://github.com/casbin/casdoc/issues/new) with detailed information about your problem.

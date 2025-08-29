@@ -1,3 +1,772 @@
 # Examples
 
-*This section is under development. Please check back soon for detailed examples.*
+Real-world examples demonstrating how to use CasDoc effectively in different scenarios. These examples cover common workflows and advanced use cases.
+
+## Basic Examples
+
+### Example 1: First-Time Setup
+
+Setting up CasDoc for a new project:
+
+```bash
+# 1. Clone or navigate to your documentation repository
+git clone https://github.com/yourorg/your-project.git
+cd your-project
+
+# 2. Ensure docs directory exists with markdown files
+mkdir -p docs
+echo "# API Documentation" > docs/api.md
+echo "# User Guide" > docs/guide.md
+
+# 3. Set environment variables
+export CASDOC_AUTHTOKEN="sk-your-openai-key-here"
+export CASDOC_REPOPATH="$(pwd)"
+
+# 4. Run CasDoc to polish documentation
+casdoc --verbose
+
+# 5. Review and commit changes
+git diff docs/
+git add docs/
+git commit -m "docs: Polish documentation with CasDoc"
+```
+
+### Example 2: Basic Translation Workflow
+
+Translating documentation for international users:
+
+```bash
+# Set up environment
+export CASDOC_AUTHTOKEN="your-api-key"
+export CASDOC_REPOPATH="/path/to/project"
+
+# Translate to Chinese and French
+casdoc --translate --languages zh,fr
+
+# Check the results
+ls -la docs/
+# docs/api.md         (original)
+# docs/api.zh.md      (Chinese translation)
+# docs/api.fr.md      (French translation)
+```
+
+## Project-Specific Examples
+
+### Example 3: Open Source Project Documentation
+
+Complete workflow for an open source project:
+
+```bash
+#!/bin/bash
+# update-docs.sh - Documentation maintenance script
+
+set -e
+
+PROJECT_ROOT="$(pwd)"
+DOCS_DIR="$PROJECT_ROOT/docs"
+
+echo "🚀 Starting documentation update process..."
+
+# Verify prerequisites
+if [ -z "$CASDOC_AUTHTOKEN" ]; then
+    echo "❌ CASDOC_AUTHTOKEN not set"
+    exit 1
+fi
+
+if [ ! -d "$DOCS_DIR" ]; then
+    echo "❌ docs/ directory not found"
+    exit 1
+fi
+
+# Set environment
+export CASDOC_REPOPATH="$PROJECT_ROOT"
+
+# Create backup
+echo "📦 Creating backup..."
+cp -r "$DOCS_DIR" "$DOCS_DIR.backup.$(date +%Y%m%d_%H%M%S)"
+
+# Polish English documentation
+echo "✨ Polishing English documentation..."
+casdoc --verbose
+
+# Translate to key languages for international users
+echo "🌍 Translating to international languages..."
+casdoc --translate --languages zh,fr,de,ja --preserve-original
+
+# Organize translations
+echo "📁 Organizing translations..."
+mkdir -p docs/i18n/{zh,fr,de,ja}
+
+for lang in zh fr de ja; do
+    find docs/ -name "*.$lang.md" -exec mv {} docs/i18n/$lang/ \;
+done
+
+# Generate index for translations
+cat > docs/i18n/README.md << EOF
+# International Documentation
+
+This directory contains translated versions of our documentation.
+
+## Available Languages
+
+- [中文 (Chinese)](./zh/)
+- [Français (French)](./fr/)
+- [Deutsch (German)](./de/)
+- [日本語 (Japanese)](./ja/)
+
+## Contributing Translations
+
+See our [Contributing Guide](../contributing.md) for information on improving translations.
+EOF
+
+echo "✅ Documentation update completed successfully!"
+echo "📝 Review changes with: git diff docs/"
+echo "💾 Commit changes with: git add docs/ && git commit -m 'docs: Update documentation'"
+```
+
+### Example 4: API Documentation Project
+
+Specialized workflow for API documentation:
+
+```bash
+#!/bin/bash
+# api-docs-update.sh
+
+# Configuration for API documentation
+export CASDOC_AUTHTOKEN="your-api-key"
+export CASDOC_REPOPATH="/path/to/api-project"
+export CASDOC_MODEL="gpt-4"  # Higher quality for technical content
+export CASDOC_TEMPERATURE="0.1"  # More consistent output
+
+# Create custom configuration for API docs
+cat > api-config.toml << EOF
+[general]
+api_timeout = 45
+max_retries = 5
+
+[processing]
+batch_size = 3  # Smaller batches for complex API docs
+concurrent_workers = 1
+
+[prompts]
+polish_prompt = """
+Improve this API documentation by:
+1. Ensuring technical accuracy
+2. Adding clear examples where missing
+3. Improving code formatting
+4. Standardizing parameter descriptions
+5. Enhancing error handling documentation
+
+Content: {content}
+"""
+EOF
+
+# Process API documentation with custom config
+casdoc --config api-config.toml --verbose
+
+# Generate API reference index
+echo "# API Reference" > docs/api/index.md
+echo "" >> docs/api/index.md
+find docs/api -name "*.md" ! -name "index.md" | sort | while read file; do
+    title=$(grep "^# " "$file" | head -1 | sed 's/# //')
+    path=$(basename "$file" .md)
+    echo "- [$title](./$path.md)" >> docs/api/index.md
+done
+
+echo "✅ API documentation updated with enhanced technical accuracy"
+```
+
+## Continuous Integration Examples
+
+### Example 5: GitHub Actions Workflow
+
+Automated documentation updates on every push:
+
+```yaml
+# .github/workflows/docs-update.yml
+name: Update Documentation
+
+on:
+  push:
+    branches: [main, develop]
+    paths: ['docs/**/*.md']
+  pull_request:
+    branches: [main]
+    paths: ['docs/**/*.md']
+
+jobs:
+  update-docs:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          
+      - name: Setup Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          
+      - name: Install CasDoc
+        run: |
+          go install github.com/casbin/casdoc@latest
+          
+      - name: Cache Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/go-build
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          
+      - name: Polish Documentation
+        env:
+          CASDOC_AUTHTOKEN: ${{ secrets.OPENAI_API_KEY }}
+          CASDOC_REPOPATH: ${{ github.workspace }}
+          CASDOC_MODEL: "gpt-3.5-turbo"
+        run: |
+          casdoc --verbose
+          
+      - name: Check for Changes
+        id: changes
+        run: |
+          if git diff --quiet docs/; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+          
+      - name: Commit Documentation Updates
+        if: steps.changes.outputs.changed == 'true' && github.event_name == 'push'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add docs/
+          git commit -m "docs: Polish documentation with CasDoc [skip ci]"
+          git push
+          
+      - name: Comment on PR
+        if: steps.changes.outputs.changed == 'true' && github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🤖 CasDoc has suggested improvements to the documentation. Please review the changes.'
+            })
+```
+
+### Example 6: GitLab CI Pipeline
+
+```yaml
+# .gitlab-ci.yml
+stages:
+  - validate
+  - update
+  - deploy
+
+variables:
+  GO_VERSION: "1.21"
+
+cache:
+  paths:
+    - /go/pkg/mod/
+
+before_script:
+  - apt-get update -qq && apt-get install -y -qq git
+  - export PATH=$PATH:/usr/local/go/bin
+
+polish_docs:
+  stage: update
+  image: golang:${GO_VERSION}
+  
+  script:
+    - go install github.com/casbin/casdoc@latest
+    - export CASDOC_REPOPATH=$CI_PROJECT_DIR
+    - casdoc --verbose
+    
+  after_script:
+    - |
+      if ! git diff --quiet docs/; then
+        git config --global user.email "gitlab-ci@example.com"
+        git config --global user.name "GitLab CI"
+        git add docs/
+        git commit -m "docs: Polish documentation with CasDoc [skip ci]"
+        git push origin $CI_COMMIT_REF_NAME
+      fi
+      
+  only:
+    changes:
+      - docs/**/*.md
+    refs:
+      - main
+      - develop
+      
+  variables:
+    CASDOC_AUTHTOKEN: $OPENAI_API_KEY
+```
+
+## Advanced Usage Examples
+
+### Example 7: Multi-Repository Documentation
+
+Managing documentation across multiple repositories:
+
+```bash
+#!/bin/bash
+# multi-repo-docs.sh
+
+# Configuration
+declare -A REPOS=(
+    ["frontend"]="/path/to/frontend-repo"
+    ["backend"]="/path/to/backend-repo"
+    ["api"]="/path/to/api-repo"
+    ["mobile"]="/path/to/mobile-repo"
+)
+
+LANGUAGES="zh,fr,de"
+REPORT_FILE="docs-update-report.json"
+
+# Initialize report
+echo "{\"repositories\": []}" > $REPORT_FILE
+
+for repo_name in "${!REPOS[@]}"; do
+    repo_path="${REPOS[$repo_name]}"
+    
+    echo "🔄 Processing $repo_name at $repo_path"
+    
+    # Check if repository exists and has docs
+    if [ ! -d "$repo_path/docs" ]; then
+        echo "⚠️  Skipping $repo_name - no docs directory"
+        continue
+    fi
+    
+    cd "$repo_path"
+    
+    # Create backup
+    backup_dir="docs.backup.$(date +%Y%m%d_%H%M%S)"
+    cp -r docs/ "$backup_dir"
+    
+    # Set environment for this repo
+    export CASDOC_REPOPATH="$repo_path"
+    
+    # Process with repository-specific config
+    case $repo_name in
+        "api")
+            # API docs need higher quality
+            export CASDOC_MODEL="gpt-4"
+            export CASDOC_TEMPERATURE="0.1"
+            ;;
+        "frontend"|"mobile")
+            # UI docs can use standard model
+            export CASDOC_MODEL="gpt-3.5-turbo"
+            export CASDOC_TEMPERATURE="0.3"
+            ;;
+    esac
+    
+    # Polish documentation
+    echo "  ✨ Polishing documentation..."
+    start_time=$(date +%s)
+    
+    if casdoc --verbose; then
+        polish_status="success"
+    else
+        polish_status="failed"
+        echo "  ❌ Polishing failed for $repo_name"
+    fi
+    
+    # Translate if polishing succeeded
+    if [ "$polish_status" = "success" ]; then
+        echo "  🌍 Translating to $LANGUAGES..."
+        if casdoc --translate --languages "$LANGUAGES"; then
+            translate_status="success"
+        else
+            translate_status="failed"
+            echo "  ❌ Translation failed for $repo_name"
+        fi
+    else
+        translate_status="skipped"
+    fi
+    
+    end_time=$(date +%s)
+    processing_time=$((end_time - start_time))
+    
+    # Update report
+    jq --arg repo "$repo_name" \
+       --arg polish "$polish_status" \
+       --arg translate "$translate_status" \
+       --arg time "$processing_time" \
+       '.repositories += [{
+         "name": $repo,
+         "polish_status": $polish,
+         "translate_status": $translate,
+         "processing_time": $time
+       }]' "$REPORT_FILE" > tmp.$$.json && mv tmp.$$.json "$REPORT_FILE"
+    
+    # Commit changes if successful
+    if [ "$polish_status" = "success" ]; then
+        git add docs/
+        git commit -m "docs: Update documentation with CasDoc" || true
+        echo "  ✅ Committed changes for $repo_name"
+    fi
+    
+    echo ""
+done
+
+# Generate summary report
+echo "📊 Documentation Update Summary"
+echo "==============================="
+jq -r '.repositories[] | "Repository: \(.name) | Polish: \(.polish_status) | Translate: \(.translate_status) | Time: \(.processing_time)s"' "$REPORT_FILE"
+
+# Send notification (example with webhook)
+curl -X POST "$WEBHOOK_URL" \
+     -H "Content-Type: application/json" \
+     -d @"$REPORT_FILE" \
+     --fail --silent || echo "Failed to send notification"
+
+echo "✅ Multi-repository documentation update completed"
+```
+
+### Example 8: Documentation Quality Assurance
+
+Quality checking workflow with before/after analysis:
+
+```bash
+#!/bin/bash
+# docs-qa.sh
+
+QA_DIR="docs-qa-$(date +%Y%m%d_%H%M%S)"
+mkdir -p "$QA_DIR"
+
+# Function to analyze documentation metrics
+analyze_docs() {
+    local dir=$1
+    local output_file=$2
+    
+    {
+        echo "# Documentation Analysis"
+        echo "Analysis Date: $(date)"
+        echo ""
+        
+        echo "## File Count"
+        find "$dir" -name "*.md" | wc -l
+        echo ""
+        
+        echo "## Total Words"
+        find "$dir" -name "*.md" -exec wc -w {} + | tail -1 | awk '{print $1}'
+        echo ""
+        
+        echo "## Average File Size"
+        find "$dir" -name "*.md" -exec wc -c {} + | awk 'END{print int($1/NR) " bytes"}'
+        echo ""
+        
+        echo "## Files by Size"
+        find "$dir" -name "*.md" -exec wc -c {} + | sort -n | tail -10
+        
+    } > "$output_file"
+}
+
+# Pre-processing analysis
+echo "📊 Analyzing documentation before processing..."
+analyze_docs "docs" "$QA_DIR/before-analysis.md"
+
+# Create sample for testing
+cp -r docs/ "$QA_DIR/original/"
+
+# Process a small sample first for quality check
+mkdir -p "$QA_DIR/sample/"
+find docs/ -name "*.md" | head -3 | while read file; do
+    cp "$file" "$QA_DIR/sample/"
+done
+
+# Test processing on sample
+export CASDOC_REPOPATH="$QA_DIR"
+export CASDOC_TEMPERATURE="0.2"  # Lower temperature for consistency
+
+echo "🧪 Testing on sample files..."
+if casdoc --path "$QA_DIR/sample" --verbose; then
+    echo "✅ Sample processing successful"
+    
+    # Manual review prompt
+    echo "📖 Please review the sample changes:"
+    echo "   Original: $QA_DIR/original/"
+    echo "   Updated:  $QA_DIR/sample/"
+    echo ""
+    read -p "Proceed with full processing? (y/N): " continue_processing
+    
+    if [[ $continue_processing =~ ^[Yy]$ ]]; then
+        echo "🚀 Processing full documentation set..."
+        export CASDOC_REPOPATH="$(pwd)"
+        casdoc --verbose
+        
+        # Post-processing analysis
+        analyze_docs "docs" "$QA_DIR/after-analysis.md"
+        
+        # Generate diff report
+        echo "📝 Generating change report..."
+        git diff --name-only docs/ > "$QA_DIR/changed-files.txt"
+        git diff --stat docs/ > "$QA_DIR/change-stats.txt"
+        
+        echo "✅ Quality assurance complete. Reports in: $QA_DIR/"
+    else
+        echo "⏹️  Processing cancelled by user"
+    fi
+else
+    echo "❌ Sample processing failed - check configuration"
+    exit 1
+fi
+```
+
+## Integration Examples
+
+### Example 9: Documentation Website Integration
+
+Integrating with static site generators:
+
+```bash
+#!/bin/bash
+# docusaurus-integration.sh
+
+# For Docusaurus projects
+DOCUSAURUS_DOCS_DIR="./docs"
+VERSIONED_DOCS_DIR="./versioned_docs"
+
+# Polish current documentation
+export CASDOC_REPOPATH="$(pwd)"
+export CASDOC_MODEL="gpt-3.5-turbo"
+
+echo "📚 Processing Docusaurus documentation..."
+
+# Process main docs
+if [ -d "$DOCUSAURUS_DOCS_DIR" ]; then
+    echo "✨ Polishing current documentation..."
+    casdoc --path "$DOCUSAURUS_DOCS_DIR"
+fi
+
+# Process versioned docs
+if [ -d "$VERSIONED_DOCS_DIR" ]; then
+    echo "🔄 Processing versioned documentation..."
+    for version_dir in "$VERSIONED_DOCS_DIR"/version-*; do
+        if [ -d "$version_dir" ]; then
+            version=$(basename "$version_dir")
+            echo "  Processing $version..."
+            casdoc --path "$version_dir"
+        fi
+    done
+fi
+
+# Generate internationalization
+echo "🌍 Creating translations for i18n..."
+casdoc --translate --languages zh,fr,de,ja --output-dir "./i18n"
+
+# Organize translations for Docusaurus structure
+for lang in zh fr de ja; do
+    mkdir -p "i18n/$lang/docusaurus-plugin-content-docs/current"
+    find ./i18n -name "*.$lang.md" -exec mv {} "i18n/$lang/docusaurus-plugin-content-docs/current/" \;
+done
+
+echo "✅ Docusaurus documentation processed successfully"
+echo "🔧 Update docusaurus.config.js to enable new languages"
+```
+
+### Example 10: Custom Workflow with Error Handling
+
+Production-ready script with comprehensive error handling:
+
+```bash
+#!/bin/bash
+# production-docs-update.sh
+
+set -euo pipefail
+
+# Configuration
+readonly SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+readonly LOG_FILE="$SCRIPT_DIR/casdoc-$(date +%Y%m%d_%H%M%S).log"
+readonly LOCK_FILE="/tmp/casdoc.lock"
+readonly MAX_RETRIES=3
+readonly BACKUP_RETENTION_DAYS=7
+
+# Logging function
+log() {
+    echo "[$(date +'%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOG_FILE"
+}
+
+# Error handling
+cleanup() {
+    local exit_code=$?
+    rm -f "$LOCK_FILE"
+    if [ $exit_code -ne 0 ]; then
+        log "ERROR: Script failed with exit code $exit_code"
+        # Send notification (customize as needed)
+        # curl -X POST "$SLACK_WEBHOOK" -d "{\"text\":\"CasDoc failed: $LOG_FILE\"}"
+    fi
+    exit $exit_code
+}
+
+trap cleanup EXIT
+
+# Check for lock file
+if [ -f "$LOCK_FILE" ]; then
+    log "ERROR: Another instance is running (lock file exists)"
+    exit 1
+fi
+
+echo $$ > "$LOCK_FILE"
+
+# Validate environment
+validate_environment() {
+    log "Validating environment..."
+    
+    if [ -z "${CASDOC_AUTHTOKEN:-}" ]; then
+        log "ERROR: CASDOC_AUTHTOKEN not set"
+        exit 1
+    fi
+    
+    if [ -z "${CASDOC_REPOPATH:-}" ]; then
+        export CASDOC_REPOPATH="$(pwd)"
+    fi
+    
+    if [ ! -d "docs" ]; then
+        log "ERROR: docs directory not found"
+        exit 1
+    fi
+    
+    if ! command -v casdoc >/dev/null 2>&1; then
+        log "ERROR: casdoc command not found"
+        exit 1
+    fi
+    
+    log "Environment validation successful"
+}
+
+# Create backup
+create_backup() {
+    log "Creating backup..."
+    
+    local backup_dir="backups/docs-$(date +%Y%m%d_%H%M%S)"
+    mkdir -p "$(dirname "$backup_dir")"
+    cp -r docs/ "$backup_dir"
+    
+    log "Backup created: $backup_dir"
+    
+    # Clean old backups
+    find backups/ -name "docs-*" -type d -mtime +$BACKUP_RETENTION_DAYS -exec rm -rf {} + 2>/dev/null || true
+}
+
+# Process documentation with retries
+process_docs() {
+    local attempt=1
+    
+    while [ $attempt -le $MAX_RETRIES ]; do
+        log "Processing documentation (attempt $attempt/$MAX_RETRIES)..."
+        
+        if casdoc --verbose 2>&1 | tee -a "$LOG_FILE"; then
+            log "Documentation processing successful"
+            return 0
+        else
+            log "WARNING: Attempt $attempt failed"
+            ((attempt++))
+            
+            if [ $attempt -le $MAX_RETRIES ]; then
+                log "Retrying in 30 seconds..."
+                sleep 30
+            fi
+        fi
+    done
+    
+    log "ERROR: All processing attempts failed"
+    return 1
+}
+
+# Validate results
+validate_results() {
+    log "Validating results..."
+    
+    # Check for syntax errors in markdown
+    find docs/ -name "*.md" -exec markdown-link-check {} \; 2>&1 | tee -a "$LOG_FILE" || true
+    
+    # Check for broken internal links (if you have a link checker)
+    # markdown-link-check docs/**/*.md 2>&1 | tee -a "$LOG_FILE" || true
+    
+    log "Results validation complete"
+}
+
+# Main execution
+main() {
+    log "Starting CasDoc documentation update"
+    
+    validate_environment
+    create_backup
+    
+    if process_docs; then
+        validate_results
+        
+        # Commit changes if in git repository
+        if git rev-parse --git-dir >/dev/null 2>&1; then
+            if ! git diff --quiet docs/; then
+                git add docs/
+                git commit -m "docs: Update documentation with CasDoc [$(date +'%Y-%m-%d %H:%M:%S')]"
+                log "Changes committed to git"
+            else
+                log "No changes to commit"
+            fi
+        fi
+        
+        log "Documentation update completed successfully"
+    else
+        log "ERROR: Documentation update failed"
+        exit 1
+    fi
+}
+
+# Run main function
+main "$@"
+```
+
+## Performance Examples
+
+### Example 11: Large-Scale Documentation Processing
+
+Optimized configuration for processing large documentation sets:
+
+```toml
+# large-scale-config.toml
+[general]
+api_timeout = 60
+max_retries = 5
+verbose = true
+
+[processing]
+batch_size = 10
+concurrent_workers = 3
+max_file_size = 5242880  # 5MB
+
+[rate_limiting]
+requests_per_minute = 40
+request_delay = 1500
+
+[openai]
+model = "gpt-3.5-turbo"
+temperature = 0.2
+max_tokens = 3000
+
+[output]
+create_backups = true
+backup_suffix = ".casdoc.bak"
+```
+
+```bash
+# Run with optimized configuration
+casdoc --config large-scale-config.toml --verbose
+```
+
+These examples demonstrate the flexibility and power of CasDoc for various documentation workflows. Adapt them to your specific needs and requirements.
+
+## Next Steps
+
+- **[API Reference](/api-reference)**: Complete command-line interface reference
+- **[Contributing](/contributing)**: Learn how to contribute to CasDoc
+- **[FAQ](/faq)**: Find answers to common questions
+- **[Configuration](/configuration)**: Advanced configuration options
